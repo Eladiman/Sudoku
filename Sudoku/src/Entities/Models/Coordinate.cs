@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sudoku.src.Entities
+namespace Sudoku.src.Entities.Models
 {
     public class Coordinate
     {
@@ -13,7 +13,7 @@ namespace Sudoku.src.Entities
 
         public Coordinate()
         {
-            x= 0; y = 0; 
+            x = 0; y = 0;
         }
         public Coordinate(int x, int y)
         {
@@ -21,7 +21,8 @@ namespace Sudoku.src.Entities
             this.y = y;
         }
 
-        public int X { 
+        public int X
+        {
             get { return x; }
             set { x = value; }
         }

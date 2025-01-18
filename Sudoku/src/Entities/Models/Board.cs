@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sudoku.src.Entities
+namespace Sudoku.src.Entities.Models
 {
     public class Board
     {
@@ -12,9 +12,9 @@ namespace Sudoku.src.Entities
 
         private Tile[,] board;
 
-        public Board(String expression) 
+        public Board(string expression)
         {
-            board = new Tile[Constants.Board_size,Constants.Board_size];
+            board = new Tile[Constants.Board_size, Constants.Board_size];
 
             currentTile = new Coordinate();
 
@@ -25,11 +25,11 @@ namespace Sudoku.src.Entities
         private void initializeBoard(string expression)
         {
             int index = 0;
-            for(int row = 0; row < Constants.Board_size; row++)
+            for (int row = 0; row < Constants.Board_size; row++)
             {
                 for (int col = 0; col < Constants.Board_size; col++)
                 {
-                    board[row,col] = new Tile(expression[index] - '0');
+                    board[row, col] = new Tile(expression[index] - '0');
                 }
             }
         }
@@ -37,7 +37,7 @@ namespace Sudoku.src.Entities
 
         public Coordinate CurrentTile
         {
-            get { return new Coordinate(currentTile.X,currentTile.Y); }
+            get { return new Coordinate(currentTile.X, currentTile.Y); }
         }
 
         public Coordinate nextTile()
@@ -47,11 +47,11 @@ namespace Sudoku.src.Entities
             if (nextRowOfBoxes(currentX, currentY))
             {
                 currentX = 1;
-                currentY = (currentY + 1)%Constants.Board_size;
+                currentY = (currentY + 1) % Constants.Board_size;
             }
-            else if(nextBox(currentX,currentY))
+            else if (nextBox(currentX, currentY))
             {
-                currentY -=(Constants.Sqrt_Board_size - 1);
+                currentY -= Constants.Sqrt_Board_size - 1;
                 currentX++;
             }
             else
@@ -59,7 +59,7 @@ namespace Sudoku.src.Entities
                 if (currentX % Constants.Sqrt_Board_size == 0)
                 {
                     currentY++;
-                    currentX -= (Constants.Sqrt_Board_size - 1);
+                    currentX -= Constants.Sqrt_Board_size - 1;
                 }
                 else currentX++;
             }

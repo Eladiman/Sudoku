@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sudoku.src.Entities
+namespace Sudoku.src.Entities.Models
 {
     public class Tile
     {
@@ -12,11 +12,11 @@ namespace Sudoku.src.Entities
 
         private int lastAvailableNumber;
 
-        private Boolean[] availableNumbers;
+        private bool[] availableNumbers;
 
-        public Tile(int number) 
-        { 
-            availableNumbers = new Boolean[Constants.Board_size];
+        public Tile(int number)
+        {
+            availableNumbers = new bool[Constants.Board_size];
 
             for (int i = 0; i < availableNumbers.Length; i++)
             {
@@ -39,11 +39,11 @@ namespace Sudoku.src.Entities
         }
 
         public int AvailableNumberCounter
-        { 
-            get { return availableNumberCounter; } 
+        {
+            get { return availableNumberCounter; }
         }
 
-        public Boolean RemoveAvailableNumber(int number)
+        public bool RemoveAvailableNumber(int number)
         {
             if (availableNumbers[number - 1])
             {
