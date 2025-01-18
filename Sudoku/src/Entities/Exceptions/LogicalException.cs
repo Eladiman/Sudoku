@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sudoku.src.Exceptions
+namespace Sudoku.src.Entities.Exceptions
 {
     internal class LogicalException
     {
