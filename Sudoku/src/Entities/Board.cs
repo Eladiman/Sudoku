@@ -44,15 +44,38 @@ namespace Sudoku.src.Entities
         {
             int currentX = currentTile.X + 1;
             int currentY = currentTile.Y + 1;
-            if (currentY % Constants.Sqrt_Board_size == 0)
+            if (nextRowOfBoxes(currentX, currentY))
             {
-                if(currentX % Constants.Sqrt_Board_size == 0) {
-                    currentY = 0; 
-                    currentX = (currentX +1) % Constants.Board_size;
-                }
+                currentX = 1;
+                currentY = (currentY + 1)%Constants.Board_size;
             }
-
+            else if(nextBox(currentX,currentY))
+            {
+                currentY -=(Constants.Sqrt_Board_size - 1);
+                currentX++;
+            }
+            else
+            {
+                if (currentX % Constants.Sqrt_Board_size == 0)
+                {
+                    currentY++;
+                    currentX -= (Constants.Sqrt_Board_size - 1);
+                }
+                else currentX++;
+            }
+            currentTile.X = currentX - 1;
+            currentTile.Y = currentY - 1;
             return new Coordinate(currentTile.X, currentTile.Y);
+        }
+
+        private bool nextBox(int currentX, int currentY)
+        {
+            return currentY % Constants.Sqrt_Board_size == 0 && currentX % Constants.Sqrt_Board_size == 0;
+        }
+
+        private bool nextRowOfBoxes(int currentX, int currentY)
+        {
+            return currentY % Constants.Sqrt_Board_size == 0 && currentX == Constants.Board_size;
         }
     }
 }
