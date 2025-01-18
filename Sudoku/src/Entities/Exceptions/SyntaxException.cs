@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Sudoku.src.Entities.Exceptions
 {
-    internal class SyntaxException
+    internal class SyntaxException : Exception
     {
+        public SyntaxException() { }
+
+        public SyntaxException(string message) : base(message) { }
     }
 }
