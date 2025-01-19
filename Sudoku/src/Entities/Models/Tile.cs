@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sudoku.src.Entities.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sudoku.src.Entities.Models
 {
-    public class Tile
+    public class Tile : ITile
     {
         private HashSet<int> _tiles;
         private HashSet<int>.Enumerator firstAvailableNumber;
@@ -28,6 +29,10 @@ namespace Sudoku.src.Entities.Models
             firstAvailableNumber.MoveNext();
         }
 
+        public HashSet<int> GetAvailableNumbers()
+        {
+            return new HashSet<int>(_tiles);
+        }
 
         public int GetFirstNumberAvailable()
         {

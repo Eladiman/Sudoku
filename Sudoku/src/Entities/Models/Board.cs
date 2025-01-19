@@ -1,4 +1,5 @@
 ﻿
+using Sudoku.src.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Sudoku.src.Entities.Models
     {
         private Coordinate currentTile;
 
-        private Tile[,] board;
+        private ITile[,] board;
 
         public Board(string expression)
         {
@@ -19,11 +20,11 @@ namespace Sudoku.src.Entities.Models
 
             currentTile = new Coordinate();
 
-            initializeBoard(expression);
+            InitializeBoard(expression);
 
         }
 
-        private void initializeBoard(string expression)
+        private void InitializeBoard(string expression)
         {
             int index = 0;
             for (int row = 0; row < Constants.Board_size; row++)
@@ -41,16 +42,16 @@ namespace Sudoku.src.Entities.Models
             get { return new Coordinate(currentTile.X, currentTile.Y); }
         }
 
-        public Coordinate nextTile()
+        public Coordinate NextTile()
         {
             int currentX = currentTile.X + 1;
             int currentY = currentTile.Y + 1;
-            if (nextRowOfBoxes(currentX, currentY))
+            if (NextRowOfBoxes(currentX, currentY))
             {
                 currentX = 1;
                 currentY = (currentY + 1) % Constants.Board_size;
             }
-            else if (nextBox(currentX, currentY))
+            else if (NextBox(currentX, currentY))
             {
                 currentY -= Constants.Sqrt_Board_size - 1;
                 currentX++;
@@ -69,12 +70,12 @@ namespace Sudoku.src.Entities.Models
             return new Coordinate(currentTile.X, currentTile.Y);
         }
 
-        private bool nextBox(int currentX, int currentY)
+        private bool NextBox(int currentX, int currentY)
         {
             return currentY % Constants.Sqrt_Board_size == 0 && currentX % Constants.Sqrt_Board_size == 0;
         }
 
-        private bool nextRowOfBoxes(int currentX, int currentY)
+        private bool NextRowOfBoxes(int currentX, int currentY)
         {
             return currentY % Constants.Sqrt_Board_size == 0 && currentX == Constants.Board_size;
         }
