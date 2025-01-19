@@ -8,57 +8,44 @@ namespace Sudoku.src.Entities.Models
 {
     public class Tile
     {
-        private int availableNumberCounter;
-
-        private int lastAvailableNumber;
-
-        private bool[] availableNumbers;
+        private HashSet<int> _tiles;
+        private HashSet<int>.Enumerator firstAvailableNumber;
 
         public Tile(int number)
         {
-            availableNumbers = new bool[Constants.Board_size];
+            _tiles = new HashSet<int>();
 
-            for (int i = 0; i < availableNumbers.Length; i++)
-            {
-                availableNumbers[i] = true;
+            if (number != 0) { 
+                _tiles.Add(number);
             }
-
-            lastAvailableNumber = 1;
-            availableNumberCounter = Constants.Board_size;
-
-            if (number > 0)
-            {
-                lastAvailableNumber = number;
-                availableNumberCounter = 1;
+            else { 
+                for(int numberToFill = 1;numberToFill<=Constants.Board_size;numberToFill++)
+                {
+                    _tiles.Add(numberToFill);
+                }
             }
+            firstAvailableNumber = _tiles.GetEnumerator();
+            firstAvailableNumber.MoveNext();
         }
 
-        public int LastAvailableNumber
+
+        public int GetFirstNumberAvailable()
         {
-            get { return lastAvailableNumber; }
+            return firstAvailableNumber.Current;
         }
-
-        public int AvailableNumberCounter
+        public int GetSize()
         {
-            get { return availableNumberCounter; }
+            return _tiles.Count;
         }
-
         public bool RemoveAvailableNumber(int number)
         {
-            if (availableNumbers[number - 1])
+            if(_tiles.Contains(number))
             {
-                availableNumbers[number - 1] = false;
-
-                availableNumberCounter--;
-                //TODO: throw an exception if 0
-
-                for (int i = lastAvailableNumber - 1; i < availableNumbers.Length; i++)
+                _tiles.Remove(number);
+                if (firstAvailableNumber.Current == number)
                 {
-                    if (availableNumbers[i])
-                    {
-                        lastAvailableNumber = i + 1;
-                        break;
-                    }
+                    firstAvailableNumber = _tiles.GetEnumerator();
+                    firstAvailableNumber.MoveNext();
                 }
                 return true;
             }
