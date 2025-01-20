@@ -98,14 +98,27 @@ namespace Sudoku.src.Entities.Models
             if (number == 0) return false;
             for (int row = 0; row < Constants.Board_size; row++)
             {
-                if (row != coordinate.X) hasChange = board[coordinate.X, row].RemoveAvailableNumber(number);
+                if (row != coordinate.X) hasChange = board[row,coordinate.Y].RemoveAvailableNumber(number);
             }
             return hasChange;
         }
 
         public bool UpdateBlock(Coordinate coordinate)
         {
-            return false;
+            bool hasChange = false;
+            int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
+            if (number == 0) return false;
+            int startOfBoxRow = coordinate.X - (Constants.Sqrt_Board_size - 1);
+            int startOfBoxCol = coordinate.Y - (Constants.Sqrt_Board_size - 1);
+            for(int row = 0;row<Constants.Sqrt_Board_size;row++)
+            {
+                for(int col = 0;col < Constants.Sqrt_Board_size;col++)
+                {
+                    if(startOfBoxRow + row != coordinate.X && startOfBoxCol + col!= coordinate.Y)
+                        hasChange = board[startOfBoxRow + row,startOfBoxCol + col].RemoveAvailableNumber(number);
+                }
+            }
+            return hasChange;
         }
 
 
