@@ -24,10 +24,10 @@ namespace Sudoku.src.Logic
 
             if (smallestTile == null) return true;//not sure if neccery
 
-            return SolveBoardWithoutRecursion(smallestTile,board);
+            return SolveBoardWithRecursion(smallestTile,board);
         }
 
-        private static bool SolveBoardWithoutRecursion(ITile smallestTile,Board board)
+        private static bool SolveBoardWithRecursion(ITile smallestTile,Board board)
         {
             Dictionary<Coordinate, HashSet<int>> savedOptions = new Dictionary<Coordinate, HashSet<int>>();
 
