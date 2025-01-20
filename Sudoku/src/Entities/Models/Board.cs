@@ -79,5 +79,40 @@ namespace Sudoku.src.Entities.Models
         {
             return currentY % Constants.Sqrt_Board_size == 0 && currentX == Constants.Board_size;
         }
+
+        public bool UpdateRow(Coordinate coordinate)
+        {
+            bool hasChange = false;
+            int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
+            if (number == 0) return false;
+            for (int col = 0; col < Constants.Board_size; col++)
+            {
+                if (col!=coordinate.Y) hasChange = board[coordinate.X,col].RemoveAvailableNumber(number);
+            }
+            return hasChange;
+        }
+        public bool UpdateCol(Coordinate coordinate)
+        {
+            bool hasChange = false;
+            int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
+            if (number == 0) return false;
+            for (int row = 0; row < Constants.Board_size; row++)
+            {
+                if (row != coordinate.X) hasChange = board[coordinate.X, row].RemoveAvailableNumber(number);
+            }
+            return hasChange;
+        }
+
+        public bool UpdateBlock(Coordinate coordinate)
+        {
+            return false;
+        }
+
+
+
+
+
+
+
     }
 }
