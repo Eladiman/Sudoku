@@ -1,6 +1,9 @@
-﻿using System;
+﻿
+using Sudoku.src.Entities.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,7 +13,7 @@ namespace Sudoku.src.Entities.Models
     {
         private Coordinate currentTile;
 
-        private Tile[,] board;
+        private ITile[,] board;
 
         public Board(string expression)
         {
@@ -18,18 +21,18 @@ namespace Sudoku.src.Entities.Models
 
             currentTile = new Coordinate();
 
-            initializeBoard(expression);
+            InitializeBoard(expression);
 
         }
 
-        private void initializeBoard(string expression)
+        private void InitializeBoard(string expression)
         {
             int index = 0;
             for (int row = 0; row < Constants.Board_size; row++)
             {
                 for (int col = 0; col < Constants.Board_size; col++)
                 {
-                    board[row, col] = new Tile(expression[index] - '0');
+                    board[row, col] = new Tile(expression[index] - '0', new Coordinate(row, col));
                 }
             }
         }
@@ -40,16 +43,16 @@ namespace Sudoku.src.Entities.Models
             get { return new Coordinate(currentTile.X, currentTile.Y); }
         }
 
-        public Coordinate nextTile()
+        public Coordinate NextTile()
         {
             int currentX = currentTile.X + 1;
             int currentY = currentTile.Y + 1;
-            if (nextRowOfBoxes(currentX, currentY))
+            if (NextRowOfBoxes(currentX, currentY))
             {
                 currentX = 1;
                 currentY = (currentY + 1) % Constants.Board_size;
             }
-            else if (nextBox(currentX, currentY))
+            else if (NextBox(currentX, currentY))
             {
                 currentY -= Constants.Sqrt_Board_size - 1;
                 currentX++;
@@ -68,14 +71,115 @@ namespace Sudoku.src.Entities.Models
             return new Coordinate(currentTile.X, currentTile.Y);
         }
 
-        private bool nextBox(int currentX, int currentY)
+        private bool NextBox(int currentX, int currentY)
         {
             return currentY % Constants.Sqrt_Board_size == 0 && currentX % Constants.Sqrt_Board_size == 0;
         }
 
-        private bool nextRowOfBoxes(int currentX, int currentY)
+        private bool NextRowOfBoxes(int currentX, int currentY)
         {
             return currentY % Constants.Sqrt_Board_size == 0 && currentX == Constants.Board_size;
         }
+
+        public bool UpdateRow(Coordinate coordinate)
+        {
+            bool hasChange = false;
+            int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
+            if (number == 0) return false;
+            for (int col = 0; col < Constants.Board_size; col++)
+            {
+                if (col != coordinate.Y && board[coordinate.X, col].RemoveAvailableNumber(number))
+                {
+                    hasChange = true;
+                }
+            }
+            return hasChange;
+        }
+        public bool UpdateCol(Coordinate coordinate)
+        {
+            bool hasChange = false;
+            int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
+            if (number == 0) return false;
+            for (int row = 0; row < Constants.Board_size; row++)
+            {
+                if (row != coordinate.X && board[row, coordinate.Y].RemoveAvailableNumber(number)) hasChange = true;
+            }
+            return hasChange;
+        }
+
+        public bool UpdateBlock(Coordinate coordinate)
+        {
+            bool hasChange = false;
+            int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
+            if (number == 0) return false;
+            int startOfBoxRow = coordinate.X - (Constants.Sqrt_Board_size - 1);
+            int startOfBoxCol = coordinate.Y - (Constants.Sqrt_Board_size - 1);
+            for(int row = 0;row<Constants.Sqrt_Board_size;row++)
+            {
+                for(int col = 0;col < Constants.Sqrt_Board_size;col++)
+                {
+                    if(startOfBoxRow + row != coordinate.X 
+                        && startOfBoxCol + col!= coordinate.Y
+                        && board[startOfBoxRow + row, startOfBoxCol + col].RemoveAvailableNumber(number))
+                        hasChange = true;
+                }
+            }
+            return hasChange;
+        }
+
+        public bool IsBoardFull()
+        {
+            for (int row = 0; row < Constants.Board_size; row++)
+            {
+                for (int col = 0; col < Constants.Board_size; col++)
+                {
+                    if (board[row, col].GetCurrentNumber() == 0) return false;
+                }
+            }
+            return true;
+        }
+
+        public Coordinate GetSmallestCoordinate()
+        {
+            Coordinate minCoordinate = null;
+            int minCount = Constants.Board_size;
+            for (int row = 0; row < Constants.Board_size; row++)
+            {
+                for (int col = 0; col < Constants.Board_size; col++)
+                {
+                    if (board[row, col].GetCurrentNumber() == 0 && board[row, col].GetSize() < minCount)
+                    {
+                        minCount = board[row, col].GetSize();
+                        minCoordinate = new Coordinate(row, col);
+                    }
+                }
+            }
+            return minCoordinate;
+        }
+
+        public Dictionary<Coordinate,HashSet<int>> SaveBoardState()
+        {
+            Dictionary<Coordinate, HashSet<int>> savedCoordinates = new Dictionary<Coordinate, HashSet<int>>();
+            for (int row = 0; row < Constants.Board_size; row++)
+            {
+                for (int col = 0; col < Constants.Board_size; col++)
+                {
+                    if (board[row, col].GetCurrentNumber() == 0)
+                    {
+                        savedCoordinates.Add(board[row, col].GetCoordinate(), board[row,col].GetAvailableNumbers());
+                    }
+                }
+            }
+            return savedCoordinates;
+        }
+
+        public void RestoreBoardState(Dictionary<Coordinate, HashSet<int>> boardState)
+        {
+            foreach(Coordinate restoredTilePlace in boardState.Keys)
+            {
+                board[restoredTilePlace.X, restoredTilePlace.Y].SetAvailableNumbers(boardState[restoredTilePlace]);
+            }
+        }
+
     }
 }
