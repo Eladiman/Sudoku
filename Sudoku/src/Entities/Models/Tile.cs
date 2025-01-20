@@ -9,12 +9,14 @@ namespace Sudoku.src.Entities.Models
 {
     public class Tile : ITile
     {
+        private Coordinate place {  get; set; }
         private HashSet<int> _tiles;
         private HashSet<int>.Enumerator firstAvailableNumber;
 
-        public Tile(int number)
+        public Tile(int number, Coordinate coordinate)
         {
             _tiles = new HashSet<int>();
+            place = coordinate;
 
             if (number != 0) { 
                 _tiles.Add(number);

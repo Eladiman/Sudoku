@@ -31,7 +31,7 @@ namespace Sudoku.src.Entities.Models
             {
                 for (int col = 0; col < Constants.Board_size; col++)
                 {
-                    board[row, col] = new Tile(expression[index] - '0');
+                    board[row, col] = new Tile(expression[index] - '0',new Coordinate(row,col));
                 }
             }
         }
