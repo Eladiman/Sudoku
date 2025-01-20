@@ -33,9 +33,16 @@ namespace Sudoku.src.Entities.Models
             }
         }
 
+        
+
         public HashSet<int> GetAvailableNumbers()
         {
             return new HashSet<int>(_tiles);
+        }
+
+        public void SetAvailableNumbers(HashSet<int> availableNumbers)
+        {
+            _tiles=new HashSet<int>(availableNumbers);
         }
 
         public int GetSize()

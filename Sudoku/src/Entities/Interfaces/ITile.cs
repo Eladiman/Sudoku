@@ -22,6 +22,8 @@ namespace Sudoku.src.Entities.Interfaces
 
         public void SetCurrentNumber(int number);
 
+        public void SetAvailableNumbers(HashSet<int> availableNumbers);
+
         public Coordinate GetCoordinate();
     }
 }
