@@ -59,6 +59,7 @@ namespace Sudoku.src.Entities.Models
                     firstAvailableNumber = _tiles.GetEnumerator();
                     firstAvailableNumber.MoveNext();
                 }
+                if (GetSize() == 1) currentNumber = GetFirstNumberAvailable(); 
                 return true;
             }
             return false;
