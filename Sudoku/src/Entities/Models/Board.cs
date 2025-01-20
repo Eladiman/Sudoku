@@ -33,6 +33,7 @@ namespace Sudoku.src.Entities.Models
                 for (int col = 0; col < Constants.Board_size; col++)
                 {
                     board[row, col] = new Tile(expression[index] - '0', new Coordinate(row, col));
+                    index++;   
                 }
             }
         }
@@ -47,38 +48,23 @@ namespace Sudoku.src.Entities.Models
         {
             int currentX = currentTile.X + 1;
             int currentY = currentTile.Y + 1;
-            if (NextRowOfBoxes(currentX, currentY))
+            if (NextRow(currentX, currentY))
             {
                 currentX = 1;
                 currentY = (currentY + 1) % Constants.Board_size;
             }
-            else if (NextBox(currentX, currentY))
-            {
-                currentY -= Constants.Sqrt_Board_size - 1;
-                currentX++;
-            }
             else
             {
-                if (currentX % Constants.Sqrt_Board_size == 0)
-                {
-                    currentY++;
-                    currentX -= Constants.Sqrt_Board_size - 1;
-                }
-                else currentX++;
+                currentX++;
             }
             currentTile.X = currentX - 1;
             currentTile.Y = currentY - 1;
             return new Coordinate(currentTile.X, currentTile.Y);
         }
 
-        private bool NextBox(int currentX, int currentY)
+        private bool NextRow(int currentX, int currentY)
         {
-            return currentY % Constants.Sqrt_Board_size == 0 && currentX % Constants.Sqrt_Board_size == 0;
-        }
-
-        private bool NextRowOfBoxes(int currentX, int currentY)
-        {
-            return currentY % Constants.Sqrt_Board_size == 0 && currentX == Constants.Board_size;
+            return currentY == Constants.Board_size;
         }
 
         public bool UpdateRow(Coordinate coordinate)
@@ -181,5 +167,51 @@ namespace Sudoku.src.Entities.Models
             }
         }
 
+        public override String ToString()
+        {
+            int MaxDigits = CountDigits(Constants.Board_size);
+            StringBuilder sb = new StringBuilder();
+            for (int Y = 0; Y < Constants.Board_size; ++Y)
+            {
+                if (Y % Constants.Sqrt_Board_size == 0)
+                {
+                    sb.Append('-', (Constants.Board_size + Constants.Sqrt_Board_size) * (MaxDigits + 1) + 1);
+                    sb.Append('\n',1);
+                }
+
+                for (int X = 0; X < Constants.Board_size; ++X)
+                {
+                    if (X % Constants.Sqrt_Board_size == 0)
+                    {
+                        sb.Append('|',1);
+                        sb.Append(' ',MaxDigits);
+                    }
+
+                    int CellValue = board[Y,X].GetCurrentNumber();
+                    sb.Append(CellValue.ToString());
+                    sb.Append(' ',MaxDigits - CountDigits(CellValue) + 1);
+                }
+
+                sb.Append('|', 1);
+                sb.Append(' ', MaxDigits);
+                sb.Append('\n', 1);
+            }
+
+            sb.Append('-', (Constants.Board_size + Constants.Sqrt_Board_size) * (MaxDigits + 1) + 1);
+            sb.Append('\n', 1);
+
+            return sb.ToString();
+        }
+
+        private static int CountDigits(int cellValue)
+        {
+            int count = 1;
+            while(cellValue > 10)
+            {
+                cellValue /= 10;
+                count += 1;
+            }
+            return count;
+        }
     }
 }
