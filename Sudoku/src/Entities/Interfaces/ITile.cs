@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sudoku.src.Entities.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,13 @@ namespace Sudoku.src.Entities.Interfaces
         public bool RemoveAvailableNumber(int number);
 
         public HashSet<int> GetAvailableNumbers();
+
+        public void AddNumber(int number);
+
+        public int GetCurrentNumber();
+
+        public void SetCurrentNumber(int number);
+
+        public Coordinate GetCoordinate();
     }
 }

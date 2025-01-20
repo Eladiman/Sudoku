@@ -9,22 +9,27 @@ namespace Sudoku.src.Entities.Models
 {
     public class Tile : ITile
     {
-        private Coordinate place {  get; set; }
+        private Coordinate place;
+
         private HashSet<int> _tiles;
+
         private HashSet<int>.Enumerator firstAvailableNumber;
+       
+        private int currentNumber;
 
         public Tile(int number, Coordinate coordinate)
         {
             _tiles = new HashSet<int>();
             place = coordinate;
-
+            currentNumber = 0;
             if (number != 0) { 
                 _tiles.Add(number);
+                currentNumber = number;
             }
             else { 
-                for(int numberToFill = 1;numberToFill<=Constants.Board_size;numberToFill++)
+                for(int numberToFill = 1 ;numberToFill<=Constants.Board_size;numberToFill++)
                 {
-                    _tiles.Add(numberToFill);
+                    AddNumber(numberToFill);
                 }
             }
             firstAvailableNumber = _tiles.GetEnumerator();
@@ -59,5 +64,24 @@ namespace Sudoku.src.Entities.Models
             return false;
         }
 
+        public void AddNumber(int number)
+        {
+            _tiles.Add(number);
+        }
+
+        public int GetCurrentNumber()
+        {
+            return currentNumber;
+        }
+
+        public void SetCurrentNumber(int number)
+        {
+            currentNumber = number;
+        }
+
+        public Coordinate GetCoordinate()
+        {
+            return new Coordinate(place.X,place.Y);
+        }
     }
 }
