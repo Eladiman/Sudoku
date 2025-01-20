@@ -1,4 +1,5 @@
-﻿using Sudoku.src.Entities.Interfaces;
+﻿using Sudoku.src.Entities.Exceptions;
+using Sudoku.src.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,12 +51,11 @@ namespace Sudoku.src.Entities.Models
             return _tiles.Count;
         }
         public bool RemoveAvailableNumber(int number)
-        {                                                                                                                                                                                                                                                                                   
-            if(_tiles.Contains(number))
+        {
+            if (currentNumber == number) throw new LogicalException(); //attempt to execute an invalid board state
+            if (_tiles.Contains(number))
             {
                 _tiles.Remove(number);
-                
-                if(GetSize() == 0) return false;//TODO: add an Exception Board is not solvable
                 if (GetSize() == 1) UpdateCurrentNumber(); 
                 return true;
             }
