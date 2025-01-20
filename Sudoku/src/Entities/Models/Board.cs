@@ -127,6 +127,11 @@ namespace Sudoku.src.Entities.Models
             return hasChange;
         }
 
+        public bool UpdateTile(Coordinate coordinate)
+        {
+            return UpdateRow(coordinate) || UpdateCol(coordinate) || UpdateBlock(coordinate);
+        }
+
         public bool IsBoardFull()
         {
             for (int row = 0; row < Constants.Board_size; row++)
@@ -139,9 +144,9 @@ namespace Sudoku.src.Entities.Models
             return true;
         }
 
-        public Coordinate GetSmallestCoordinate()
+        public ITile GetSmallestTile()
         {
-            Coordinate minCoordinate = null;
+            ITile minTile = null;
             int minCount = Constants.Board_size;
             for (int row = 0; row < Constants.Board_size; row++)
             {
@@ -150,11 +155,11 @@ namespace Sudoku.src.Entities.Models
                     if (board[row, col].GetCurrentNumber() == 0 && board[row, col].GetSize() < minCount)
                     {
                         minCount = board[row, col].GetSize();
-                        minCoordinate = new Coordinate(row, col);
+                        minTile = board[row,col];
                     }
                 }
             }
-            return minCoordinate;
+            return minTile;
         }
 
         public Dictionary<Coordinate,HashSet<int>> SaveBoardState()
@@ -179,6 +184,11 @@ namespace Sudoku.src.Entities.Models
             {
                 board[restoredTilePlace.X, restoredTilePlace.Y].SetAvailableNumbers(boardState[restoredTilePlace]);
             }
+        }
+
+        public void ReplaceTile(ITile tile)
+        {
+            board[tile.GetCoordinate().X, tile.GetCoordinate().Y] = tile;
         }
 
     }
