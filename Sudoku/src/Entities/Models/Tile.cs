@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,8 +13,6 @@ namespace Sudoku.src.Entities.Models
         private Coordinate place;
 
         private HashSet<int> _tiles;
-
-        private HashSet<int>.Enumerator firstAvailableNumber;
        
         private int currentNumber;
 
@@ -32,8 +31,6 @@ namespace Sudoku.src.Entities.Models
                     AddNumber(numberToFill);
                 }
             }
-            firstAvailableNumber = _tiles.GetEnumerator();
-            firstAvailableNumber.MoveNext();
         }
 
         public HashSet<int> GetAvailableNumbers()
@@ -41,32 +38,30 @@ namespace Sudoku.src.Entities.Models
             return new HashSet<int>(_tiles);
         }
 
-        public int GetFirstNumberAvailable()
-        {
-            return firstAvailableNumber.Current;
-        }
         public int GetSize()
         {
             return _tiles.Count;
         }
         public bool RemoveAvailableNumber(int number)
-        {
+        {                                                                                                                                                                                                                                                                                   
             if(_tiles.Contains(number))
             {
                 _tiles.Remove(number);
                 
                 if(GetSize() == 0) return false;//TODO: add an Exception Board is not solvable
-                
-                
-                if (firstAvailableNumber.Current == number)
-                {
-                    firstAvailableNumber = _tiles.GetEnumerator();
-                    firstAvailableNumber.MoveNext();
-                }
-                if (GetSize() == 1) currentNumber = GetFirstNumberAvailable(); 
+                if (GetSize() == 1) UpdateCurrentNumber(); 
                 return true;
             }
             return false;
+        }
+
+        private void UpdateCurrentNumber()
+        {
+            foreach (int number in _tiles)
+            {
+                currentNumber = number;
+                break;
+            }
         }
 
         public void AddNumber(int number)

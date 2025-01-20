@@ -9,7 +9,6 @@ namespace Sudoku.src.Entities.Interfaces
 {
     public interface ITile
     {
-        public int GetFirstNumberAvailable();
 
         public int GetSize();
 
