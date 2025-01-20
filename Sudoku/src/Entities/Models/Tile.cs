@@ -54,6 +54,7 @@ namespace Sudoku.src.Entities.Models
             if(_tiles.Contains(number))
             {
                 _tiles.Remove(number);
+                if(GetSize() == 0) return false;//TODO: add an Exception Board is not solveable
                 if (firstAvailableNumber.Current == number)
                 {
                     firstAvailableNumber = _tiles.GetEnumerator();
