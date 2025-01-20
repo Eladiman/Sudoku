@@ -3,6 +3,7 @@ using Sudoku.src.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,7 +32,7 @@ namespace Sudoku.src.Entities.Models
             {
                 for (int col = 0; col < Constants.Board_size; col++)
                 {
-                    board[row, col] = new Tile(expression[index] - '0',new Coordinate(row,col));
+                    board[row, col] = new Tile(expression[index] - '0', new Coordinate(row, col));
                 }
             }
         }
@@ -87,7 +88,7 @@ namespace Sudoku.src.Entities.Models
             if (number == 0) return false;
             for (int col = 0; col < Constants.Board_size; col++)
             {
-                if (col!=coordinate.Y) hasChange = board[coordinate.X,col].RemoveAvailableNumber(number);
+                if (col != coordinate.Y) hasChange = board[coordinate.X, col].RemoveAvailableNumber(number);
             }
             return hasChange;
         }
@@ -98,7 +99,7 @@ namespace Sudoku.src.Entities.Models
             if (number == 0) return false;
             for (int row = 0; row < Constants.Board_size; row++)
             {
-                if (row != coordinate.X) hasChange = board[row,coordinate.Y].RemoveAvailableNumber(number);
+                if (row != coordinate.X) hasChange = board[row, coordinate.Y].RemoveAvailableNumber(number);
             }
             return hasChange;
         }
@@ -121,11 +122,35 @@ namespace Sudoku.src.Entities.Models
             return hasChange;
         }
 
+        public bool IsBoardFull()
+        {
+            for (int row = 0; row < Constants.Board_size; row++)
+            {
+                for (int col = 0; col < Constants.Board_size; col++)
+                {
+                    if (board[row, col].GetCurrentNumber() == 0) return false;
+                }
+            }
+            return true;
+        }
 
-
-
-
-
+        public Coordinate GetSmallestCoordinate()
+        {
+            Coordinate minCoordinate = null;
+            int minCount = Constants.Board_size;
+            for (int row = 0; row < Constants.Board_size; row++)
+            {
+                for (int col = 0; col < Constants.Board_size; col++)
+                {
+                    if (board[row, col].GetCurrentNumber() == 0 && board[row, col].GetSize() < minCount)
+                    {
+                        minCount = board[row, col].GetSize();
+                        minCoordinate = new Coordinate(row, col);
+                    }
+                }
+            }
+            return minCoordinate;
+        }
 
     }
 }
