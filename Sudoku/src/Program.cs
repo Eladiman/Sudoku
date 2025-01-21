@@ -12,7 +12,7 @@ namespace Sudoku.src
     {
         public static void Main(string[] args)
         {
-            Board board = new Board("000005080000601043000000000010500000000106000300000005530000061000000004000000000");
+            Board board = new Board("400000805030000000000700000020000060000080400000010000000603070500200000104000000");
             Console.WriteLine(board);
 
             if(BoardSolver.SolveBoard(board)) Console.WriteLine(board);

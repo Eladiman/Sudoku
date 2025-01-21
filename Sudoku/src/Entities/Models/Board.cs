@@ -109,7 +109,10 @@ namespace Sudoku.src.Entities.Models
                     if(startOfBoxRow + row != coordinate.X 
                         && startOfBoxCol + col!= coordinate.Y
                         && board[startOfBoxRow + row, startOfBoxCol + col].RemoveAvailableNumber(number))
+                    {
                         hasChange = true;
+                    }
+                        
                 }
             }
             return hasChange;
@@ -177,6 +180,7 @@ namespace Sudoku.src.Entities.Models
         {
             foreach(Coordinate restoredTilePlace in boardState.Keys)
             {
+                board[restoredTilePlace.X, restoredTilePlace.Y].SetCurrentNumber(0);
                 board[restoredTilePlace.X, restoredTilePlace.Y].SetAvailableNumbers(boardState[restoredTilePlace]);
             }
         }

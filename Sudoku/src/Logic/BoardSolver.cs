@@ -25,7 +25,27 @@ namespace Sudoku.src.Logic
 
             if (smallestTile == null) return true;//not sure if neccery
 
-            return SolveBoardWithRecursion(smallestTile,board);
+            Dictionary<Coordinate, HashSet<int>> savedOptions = new Dictionary<Coordinate, HashSet<int>>();
+
+            foreach (int currentPossibility in smallestTile.GetAvailableNumbers())
+            {
+                try
+                {
+                    savedOptions = board.SaveBoardState();
+                    smallestTile.SetCurrentNumber(currentPossibility);
+                    board.ReplaceTile(smallestTile);
+
+                    if (SolveBoard(board)) return true;
+
+                    board.RestoreBoardState(savedOptions);
+                    smallestTile.SetCurrentNumber(0);
+                    smallestTile.RemoveAvailableNumber(currentPossibility);
+                    board.ReplaceTile(smallestTile);
+                }
+                catch (LogicalException le) { return false; }
+
+            }
+            return false;
         }
 
         private static bool SolveBoardWithRecursion(ITile smallestTile,Board board)
@@ -39,12 +59,16 @@ namespace Sudoku.src.Logic
                     savedOptions = board.SaveBoardState();
                     smallestTile.SetCurrentNumber(currentPossibility);
                     board.ReplaceTile(smallestTile);
+
                     if (SolveBoard(board)) return true;
+
+                    board.RestoreBoardState(savedOptions);
+                    smallestTile.SetCurrentNumber(0);
                     smallestTile.RemoveAvailableNumber(currentPossibility);
                     board.ReplaceTile(smallestTile);
-                    board.RestoreBoardState(savedOptions);
                 }
-                catch (LogicalException le) { return false; }
+                catch (LogicalException le) { return false;}
+                
             }
             return false;
         }

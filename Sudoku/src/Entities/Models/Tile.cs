@@ -52,8 +52,8 @@ namespace Sudoku.src.Entities.Models
         }
         public bool RemoveAvailableNumber(int number)
         {
-            if (currentNumber == number) throw new LogicalException(); //attempt to execute an invalid board state
-            if (_tiles.Contains(number))
+            if (currentNumber==number && number!=0 && GetSize() == 1) throw new LogicalException(); //attempt to execute an invalid board state
+            if (_tiles.Contains(number) && currentNumber == 0)
             {
                 _tiles.Remove(number);
                 if (GetSize() == 1) UpdateCurrentNumber(); 
@@ -62,13 +62,9 @@ namespace Sudoku.src.Entities.Models
             return false;
         }
 
-        private void UpdateCurrentNumber()
+        public void UpdateCurrentNumber()
         {
-            foreach (int number in _tiles)
-            {
-                currentNumber = number;
-                break;
-            }
+            currentNumber = _tiles.First();
         }
 
         public void AddNumber(int number)
