@@ -50,12 +50,13 @@ namespace Sudoku.src.Entities.Models
             int currentY = currentTile.Y + 1;
             if (NextRow(currentX, currentY))
             {
-                currentX = 1;
-                currentY = (currentY + 1) % Constants.Board_size;
+                if (currentX == Constants.Board_size) currentX = 0;
+                currentX++;
+                currentY = 1;
             }
             else
             {
-                currentX++;
+                currentY++;
             }
             currentTile.X = currentX - 1;
             currentTile.Y = currentY - 1;
@@ -98,8 +99,9 @@ namespace Sudoku.src.Entities.Models
             bool hasChange = false;
             int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
             if (number == 0) return false;
-            int startOfBoxRow = coordinate.X - (Constants.Sqrt_Board_size - 1);
-            int startOfBoxCol = coordinate.Y - (Constants.Sqrt_Board_size - 1);
+            Coordinate startOfBox = findStartOfBox(coordinate);
+            int startOfBoxRow = startOfBox.X;
+            int startOfBoxCol = startOfBox.Y;
             for(int row = 0;row<Constants.Sqrt_Board_size;row++)
             {
                 for(int col = 0;col < Constants.Sqrt_Board_size;col++)
@@ -111,6 +113,13 @@ namespace Sudoku.src.Entities.Models
                 }
             }
             return hasChange;
+        }
+
+        private Coordinate findStartOfBox(Coordinate coordinate)
+        {
+            int X = ((coordinate.X)/Constants.Sqrt_Board_size) * Constants.Sqrt_Board_size;
+            int Y = ((coordinate.Y) / Constants.Sqrt_Board_size) * Constants.Sqrt_Board_size;
+            return new Coordinate(X, Y);
         }
 
         public bool UpdateTile(Coordinate coordinate)
@@ -138,7 +147,7 @@ namespace Sudoku.src.Entities.Models
             {
                 for (int col = 0; col < Constants.Board_size; col++)
                 {
-                    if (board[row, col].GetCurrentNumber() == 0 && board[row, col].GetSize() < minCount)
+                    if (board[row, col].GetCurrentNumber() == 0 && board[row, col].GetSize() <= minCount)
                     {
                         minCount = board[row, col].GetSize();
                         minTile = board[row,col];

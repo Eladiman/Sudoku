@@ -12,6 +12,7 @@ namespace Sudoku.src.Logic
     public static class BoardSolver
     {
 
+
         public static bool SolveBoard(Board board)
         {
             try
@@ -33,11 +34,17 @@ namespace Sudoku.src.Logic
 
             foreach (int currentPossibility in smallestTile.GetAvailableNumbers())
             {
-                savedOptions = board.SaveBoardState();
-                if (SolveBoard(board)) return true;
-                smallestTile.RemoveAvailableNumber(currentPossibility);
-                board.ReplaceTile(smallestTile);
-                board.RestoreBoardState(savedOptions);
+                try
+                {
+                    savedOptions = board.SaveBoardState();
+                    smallestTile.SetCurrentNumber(currentPossibility);
+                    board.ReplaceTile(smallestTile);
+                    if (SolveBoard(board)) return true;
+                    smallestTile.RemoveAvailableNumber(currentPossibility);
+                    board.ReplaceTile(smallestTile);
+                    board.RestoreBoardState(savedOptions);
+                }
+                catch (LogicalException le) { return false; }
             }
             return false;
         }
@@ -48,6 +55,7 @@ namespace Sudoku.src.Logic
             bool tryAgain = false;
             while (!unSolvable)
             {
+                tryAgain = false;
                 for (int time = 0; time < Constants.Board_size * Constants.Board_size; time++)
                 {
                     if (board.IsBoardFull()) return true;
