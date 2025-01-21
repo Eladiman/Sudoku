@@ -33,6 +33,7 @@ namespace Sudoku.src.Entities.Models
                 for (int col = 0; col < Constants.Board_size; col++)
                 {
                     board[row, col] = new Tile(expression[index] - '0', new Coordinate(row, col));
+                    index++;   
                 }
             }
         }
@@ -47,38 +48,24 @@ namespace Sudoku.src.Entities.Models
         {
             int currentX = currentTile.X + 1;
             int currentY = currentTile.Y + 1;
-            if (NextRowOfBoxes(currentX, currentY))
+            if (NextRow(currentX, currentY))
             {
-                currentX = 1;
-                currentY = (currentY + 1) % Constants.Board_size;
-            }
-            else if (NextBox(currentX, currentY))
-            {
-                currentY -= Constants.Sqrt_Board_size - 1;
+                if (currentX == Constants.Board_size) currentX = 0;
                 currentX++;
+                currentY = 1;
             }
             else
             {
-                if (currentX % Constants.Sqrt_Board_size == 0)
-                {
-                    currentY++;
-                    currentX -= Constants.Sqrt_Board_size - 1;
-                }
-                else currentX++;
+                currentY++;
             }
             currentTile.X = currentX - 1;
             currentTile.Y = currentY - 1;
             return new Coordinate(currentTile.X, currentTile.Y);
         }
 
-        private bool NextBox(int currentX, int currentY)
+        private bool NextRow(int currentX, int currentY)
         {
-            return currentY % Constants.Sqrt_Board_size == 0 && currentX % Constants.Sqrt_Board_size == 0;
-        }
-
-        private bool NextRowOfBoxes(int currentX, int currentY)
-        {
-            return currentY % Constants.Sqrt_Board_size == 0 && currentX == Constants.Board_size;
+            return currentY == Constants.Board_size;
         }
 
         public bool UpdateRow(Coordinate coordinate)
@@ -112,8 +99,9 @@ namespace Sudoku.src.Entities.Models
             bool hasChange = false;
             int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
             if (number == 0) return false;
-            int startOfBoxRow = coordinate.X - (Constants.Sqrt_Board_size - 1);
-            int startOfBoxCol = coordinate.Y - (Constants.Sqrt_Board_size - 1);
+            Coordinate startOfBox = findStartOfBox(coordinate);
+            int startOfBoxRow = startOfBox.X;
+            int startOfBoxCol = startOfBox.Y;
             for(int row = 0;row<Constants.Sqrt_Board_size;row++)
             {
                 for(int col = 0;col < Constants.Sqrt_Board_size;col++)
@@ -121,10 +109,20 @@ namespace Sudoku.src.Entities.Models
                     if(startOfBoxRow + row != coordinate.X 
                         && startOfBoxCol + col!= coordinate.Y
                         && board[startOfBoxRow + row, startOfBoxCol + col].RemoveAvailableNumber(number))
+                    {
                         hasChange = true;
+                    }
+                        
                 }
             }
             return hasChange;
+        }
+
+        private Coordinate findStartOfBox(Coordinate coordinate)
+        {
+            int X = ((coordinate.X)/Constants.Sqrt_Board_size) * Constants.Sqrt_Board_size;
+            int Y = ((coordinate.Y) / Constants.Sqrt_Board_size) * Constants.Sqrt_Board_size;
+            return new Coordinate(X, Y);
         }
 
         public bool UpdateTile(Coordinate coordinate)
@@ -152,7 +150,7 @@ namespace Sudoku.src.Entities.Models
             {
                 for (int col = 0; col < Constants.Board_size; col++)
                 {
-                    if (board[row, col].GetCurrentNumber() == 0 && board[row, col].GetSize() < minCount)
+                    if (board[row, col].GetCurrentNumber() == 0 && board[row, col].GetSize() <= minCount)
                     {
                         minCount = board[row, col].GetSize();
                         minTile = board[row,col];
@@ -182,10 +180,57 @@ namespace Sudoku.src.Entities.Models
         {
             foreach(Coordinate restoredTilePlace in boardState.Keys)
             {
+                board[restoredTilePlace.X, restoredTilePlace.Y].SetCurrentNumber(0);
                 board[restoredTilePlace.X, restoredTilePlace.Y].SetAvailableNumbers(boardState[restoredTilePlace]);
             }
         }
 
+        public override String ToString()
+        {
+            int MaxDigits = CountDigits(Constants.Board_size);
+            StringBuilder sb = new StringBuilder();
+            for (int Y = 0; Y < Constants.Board_size; ++Y)
+            {
+                if (Y % Constants.Sqrt_Board_size == 0)
+                {
+                    sb.Append('-', (Constants.Board_size + Constants.Sqrt_Board_size) * (MaxDigits + 1) + 1);
+                    sb.Append('\n',1);
+                }
+
+                for (int X = 0; X < Constants.Board_size; ++X)
+                {
+                    if (X % Constants.Sqrt_Board_size == 0)
+                    {
+                        sb.Append('|',1);
+                        sb.Append(' ',MaxDigits);
+                    }
+
+                    int CellValue = board[Y,X].GetCurrentNumber();
+                    sb.Append(CellValue.ToString());
+                    sb.Append(' ',MaxDigits - CountDigits(CellValue) + 1);
+                }
+
+                sb.Append('|', 1);
+                sb.Append(' ', MaxDigits);
+                sb.Append('\n', 1);
+            }
+
+            sb.Append('-', (Constants.Board_size + Constants.Sqrt_Board_size) * (MaxDigits + 1) + 1);
+            sb.Append('\n', 1);
+
+            return sb.ToString();
+        }
+
+        private static int CountDigits(int cellValue)
+        {
+            int count = 1;
+            while(cellValue > 10)
+            {
+                cellValue /= 10;
+                count += 1;
+            }
+            return count;
+        }
         public void ReplaceTile(ITile tile)
         {
             board[tile.GetCoordinate().X, tile.GetCoordinate().Y] = tile;
