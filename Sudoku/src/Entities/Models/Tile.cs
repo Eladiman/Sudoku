@@ -52,11 +52,10 @@ namespace Sudoku.src.Entities.Models
         }
         public bool RemoveAvailableNumber(int number)
         {
-            if (currentNumber==number && number!=0 && GetSize() == 1) throw new LogicalException(); //attempt to execute an invalid board state
+            if (currentNumber==number && number!=0) throw new LogicalException(); //attempt to execute an invalid board state
             if (_tiles.Contains(number) && currentNumber == 0)
             {
                 _tiles.Remove(number);
-                if (GetSize() == 1) UpdateCurrentNumber(); 
                 return true;
             }
             return false;
@@ -85,6 +84,18 @@ namespace Sudoku.src.Entities.Models
         public Coordinate GetCoordinate()
         {
             return new Coordinate(place.X,place.Y);
+        }
+
+        public bool ContainNumber(int number)
+        {
+            return _tiles.Contains(number);
+        }
+
+        public void UpdateCurrentNumberAndDeletePossibilities(int number)
+        {
+            _tiles.Clear();
+            _tiles.Add(number);
+            currentNumber = number;
         }
     }
 }

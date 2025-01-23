@@ -27,5 +27,8 @@ namespace Sudoku.src.Entities.Interfaces
         public Coordinate GetCoordinate();
 
         public void UpdateCurrentNumber();
+
+        public void UpdateCurrentNumberAndDeletePossibilities(int number);
+        public bool ContainNumber(int number);
     }
 }
