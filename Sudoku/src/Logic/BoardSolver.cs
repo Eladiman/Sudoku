@@ -12,10 +12,7 @@ namespace Sudoku.src.Logic
     public static class BoardSolver
     {
 
-<<<<<<< HEAD
-=======
 
->>>>>>> dev
         public static bool SolveBoard(Board board)
         {
             try
@@ -28,9 +25,6 @@ namespace Sudoku.src.Logic
 
             if (smallestTile == null) return true;//not sure if neccery
 
-<<<<<<< HEAD
-            return SolveBoardWithRecursion(smallestTile,board);
-=======
             Dictionary<Coordinate, HashSet<int>> savedOptions = new Dictionary<Coordinate, HashSet<int>>();
 
             foreach (int currentPossibility in smallestTile.GetAvailableNumbers())
@@ -52,7 +46,6 @@ namespace Sudoku.src.Logic
 
             }
             return false;
->>>>>>> dev
         }
 
         private static bool SolveBoardWithRecursion(ITile smallestTile,Board board)
@@ -61,13 +54,6 @@ namespace Sudoku.src.Logic
 
             foreach (int currentPossibility in smallestTile.GetAvailableNumbers())
             {
-<<<<<<< HEAD
-                savedOptions = board.SaveBoardState();
-                if (SolveBoard(board)) return true;
-                smallestTile.RemoveAvailableNumber(currentPossibility);
-                board.ReplaceTile(smallestTile);
-                board.RestoreBoardState(savedOptions);
-=======
                 try
                 {
                     savedOptions = board.SaveBoardState();
@@ -83,7 +69,6 @@ namespace Sudoku.src.Logic
                 }
                 catch (LogicalException le) { return false;}
                 
->>>>>>> dev
             }
             return false;
         }
@@ -94,10 +79,7 @@ namespace Sudoku.src.Logic
             bool tryAgain = false;
             while (!unSolvable)
             {
-<<<<<<< HEAD
-=======
                 tryAgain = false;
->>>>>>> dev
                 for (int time = 0; time < Constants.Board_size * Constants.Board_size; time++)
                 {
                     if (board.IsBoardFull()) return true;

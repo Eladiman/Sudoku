@@ -2,6 +2,7 @@
 using Sudoku.src.Logic;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +13,23 @@ namespace Sudoku.src
     {
         public static void Main(string[] args)
         {
-            Board board = new Board("400000805030000000000700000020000060000080400000010000000603070500200000104000000");
+            Board board = new Board("800000070006010053040600000000080400003000700020005038000000800004050061900002000");
             Console.WriteLine(board);
 
-            if(BoardSolver.SolveBoard(board)) Console.WriteLine(board);
-            else Console.WriteLine("Board is not Solvable");
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            if (BoardSolver.SolveBoard(board))
+            {
+                stopWatch.Stop();
+                Console.WriteLine("Time took: " + stopWatch.ElapsedMilliseconds + " ms");
+                Console.WriteLine(board);
+            }
+            else
+            {
+                stopWatch.Stop();
+                Console.WriteLine("Time took: " + stopWatch.ElapsedMilliseconds + " ms");
+                Console.WriteLine("Board is not Solvable");
+            }
         }
     }
 }
