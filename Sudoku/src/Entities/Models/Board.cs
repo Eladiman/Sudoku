@@ -1,17 +1,26 @@
 ﻿
+using Sudoku.src.Entities.Exceptions;
 using Sudoku.src.Entities.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Sudoku.src.Entities.Models
 {
     public class Board
     {
         private Coordinate currentTile;
+
+        private ArrayList fullCells;
+
+        private int lastFullCellIndex { get; set; }
+
+        private ArrayList emptyCells;
 
         private ITile[,] board;
 
@@ -21,6 +30,10 @@ namespace Sudoku.src.Entities.Models
 
             currentTile = new Coordinate();
 
+            fullCells = new ArrayList();
+            lastFullCellIndex = 0;
+            emptyCells = new ArrayList();
+
             InitializeBoard(expression);
 
         }
@@ -28,11 +41,17 @@ namespace Sudoku.src.Entities.Models
         private void InitializeBoard(string expression)
         {
             int index = 0;
+            int currentNumber = 0;
+            Coordinate currentCoordinate;
             for (int row = 0; row < Constants.Board_size; row++)
             {
                 for (int col = 0; col < Constants.Board_size; col++)
                 {
-                    board[row, col] = new Tile(expression[index] - '0', new Coordinate(row, col));
+                    currentNumber = expression[index] - '0';
+                    currentCoordinate = new Coordinate(row, col);
+                    board[row, col] = new Tile(currentNumber, currentCoordinate);
+                    if (currentNumber!=0) fullCells.Add(currentCoordinate);
+                    else emptyCells.Add(currentCoordinate);
                     index++;   
                 }
             }
@@ -77,6 +96,12 @@ namespace Sudoku.src.Entities.Models
             {
                 if (col != coordinate.Y && board[coordinate.X, col].RemoveAvailableNumber(number))
                 {
+                    if (board[coordinate.X, col].GetSize() == 0) throw new LogicalException();
+                    if (board[coordinate.X, col].GetSize() == 1)
+                    {
+                        board[coordinate.X, col].UpdateCurrentNumber();
+                        fullCells.Add(board[coordinate.X, col].GetCoordinate());
+                    }
                     hasChange = true;
                 }
             }
@@ -89,7 +114,16 @@ namespace Sudoku.src.Entities.Models
             if (number == 0) return false;
             for (int row = 0; row < Constants.Board_size; row++)
             {
-                if (row != coordinate.X && board[row, coordinate.Y].RemoveAvailableNumber(number)) hasChange = true;
+                if (row != coordinate.X && board[row, coordinate.Y].RemoveAvailableNumber(number))
+                {
+                    if (board[row, coordinate.Y].GetSize() == 0) throw new LogicalException();
+                    if (board[row, coordinate.Y].GetSize() == 1)
+                    {
+                        board[row, coordinate.Y].UpdateCurrentNumber();
+                        fullCells.Add(board[row, coordinate.Y].GetCoordinate());
+                    }
+                    hasChange = true;
+                }
             }
             return hasChange;
         }
@@ -110,6 +144,12 @@ namespace Sudoku.src.Entities.Models
                         && startOfBoxCol + col!= coordinate.Y
                         && board[startOfBoxRow + row, startOfBoxCol + col].RemoveAvailableNumber(number))
                     {
+                        if (board[startOfBoxRow + row, startOfBoxCol + col].GetSize() == 0) throw new LogicalException();
+                        if (board[startOfBoxRow + row, startOfBoxCol + col].GetSize() == 1)
+                        {
+                            board[startOfBoxRow + row, startOfBoxCol + col].UpdateCurrentNumber();
+                            fullCells.Add(board[startOfBoxRow + row, startOfBoxCol + col].GetCoordinate());
+                        }
                         hasChange = true;
                     }
                         
@@ -127,19 +167,111 @@ namespace Sudoku.src.Entities.Models
 
         public bool UpdateTile(Coordinate coordinate)
         {
-            return UpdateRow(coordinate) || UpdateCol(coordinate) || UpdateBlock(coordinate);
+            bool hasChange = false;
+            if (UpdateRow(coordinate)) hasChange = true;
+            if (UpdateCol(coordinate)) hasChange = true;
+            if (UpdateBlock(coordinate)) hasChange = true;
+            return hasChange;
+        }
+
+        public bool FullCellsCheck()
+        {
+            bool hasChange = false;
+            for(;lastFullCellIndex < fullCells.Count;lastFullCellIndex++)
+            {
+                if (UpdateTile((Coordinate)fullCells[lastFullCellIndex]))
+                {
+                    hasChange = true;
+                }
+            }
+            return hasChange ;
+        }
+
+        public bool ImplementHiddenSingle(Coordinate coordinate)
+        {
+            return ImplementHiddenSingleRow(coordinate) || ImplementHiddenSingleCol(coordinate) || ImplementHiddenSingleBlock(coordinate);
+        }
+
+        private bool ImplementHiddenSingleBlock(Coordinate coordinate)
+        {
+            bool ValidPossibility = true;
+            ITile currentTile = board[coordinate.X, coordinate.Y];
+            if (currentTile.GetCurrentNumber() != 0) return false;
+            Coordinate startOfBox = findStartOfBox(coordinate);
+            int startOfBoxRow = startOfBox.X;
+            int startOfBoxCol = startOfBox.Y;
+            foreach (int possibility in currentTile.GetAvailableNumbers())
+            {
+                ValidPossibility = false;
+                int row = 0;
+                int col = 0;
+
+                for (; row < Constants.Sqrt_Board_size && ValidPossibility; row++)
+                {
+                    for (col = 0; col < Constants.Sqrt_Board_size && ValidPossibility ; col++)
+                    {
+                        if (startOfBoxRow + row != coordinate.X
+                            && startOfBoxCol + col != coordinate.Y
+                            && board[startOfBoxRow + row, startOfBoxCol + col].ContainNumber(possibility)) ValidPossibility = false;
+                    }
+                }
+
+                if (ValidPossibility)
+                {
+                    board[startOfBoxRow + row - 1, startOfBoxCol + col - 1].SetCurrentNumber(possibility);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool ImplementHiddenSingleCol(Coordinate coordinate)
+        {
+            bool ValidPossibility = true;
+            ITile currentTile = board[coordinate.X, coordinate.Y];
+            if (currentTile.GetCurrentNumber() != 0) return false;
+            foreach (int possibility in currentTile.GetAvailableNumbers())
+            {
+                ValidPossibility = false;
+                int row = 0;
+                for (; row < Constants.Board_size && ValidPossibility; row++)
+                {
+                    if (row != coordinate.X && board[row, coordinate.Y].ContainNumber(possibility)) ValidPossibility = false;
+                }
+                if (ValidPossibility)
+                {
+                    board[row - 1, coordinate.Y].SetCurrentNumber(possibility);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool ImplementHiddenSingleRow(Coordinate coordinate)
+        {
+            bool ValidPossibility = true;
+            ITile currentTile = board[coordinate.X, coordinate.Y];
+            if (currentTile.GetCurrentNumber() != 0) return false;
+            foreach (int possibility in currentTile.GetAvailableNumbers())
+            {
+                ValidPossibility = false;
+                int col = 0;
+                for (; col < Constants.Board_size && ValidPossibility; col++)
+                {
+                    if (col != coordinate.Y && board[coordinate.X, col].ContainNumber(possibility)) ValidPossibility = false;
+                }
+                if (ValidPossibility)
+                {
+                    board[coordinate.X, col -1].SetCurrentNumber(possibility);
+                    return true;
+                }
+            }
+            return false;
         }
 
         public bool IsBoardFull()
         {
-            for (int row = 0; row < Constants.Board_size; row++)
-            {
-                for (int col = 0; col < Constants.Board_size; col++)
-                {
-                    if (board[row, col].GetCurrentNumber() == 0) return false;
-                }
-            }
-            return true;
+            return fullCells.Count == Constants.Board_size * Constants.Board_size;  
         }
 
         public ITile GetSmallestTile()
@@ -185,7 +317,7 @@ namespace Sudoku.src.Entities.Models
             }
         }
 
-        public override String ToString()
+        public override System.String ToString()
         {
             int MaxDigits = CountDigits(Constants.Board_size);
             StringBuilder sb = new StringBuilder();
