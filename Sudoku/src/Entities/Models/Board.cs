@@ -18,7 +18,7 @@ namespace Sudoku.src.Entities.Models
 
         private ArrayList fullCells;
 
-        private int lastFullCellIndex { get; set; }
+        private int lastFullCellIndex;
 
         private ArrayList emptyCells;
 
@@ -187,6 +187,22 @@ namespace Sudoku.src.Entities.Models
             return hasChange ;
         }
 
+        public void AddFullCell(Coordinate coordinate)
+        {
+            fullCells.Add(coordinate);
+        }
+
+        public void RestoreFullCells(int lastIndex)
+        {
+            int index = fullCells.Count;
+            for(;index>lastIndex;index--)
+            {
+                fullCells.RemoveAt(index - 1);
+            }
+            lastFullCellIndex = lastIndex;
+        }
+
+        public int GetLastFullCellIndex() { return lastFullCellIndex; }
         public bool ImplementHiddenSingle(Coordinate coordinate)
         {
             return ImplementHiddenSingleRow(coordinate) || ImplementHiddenSingleCol(coordinate) || ImplementHiddenSingleBlock(coordinate);

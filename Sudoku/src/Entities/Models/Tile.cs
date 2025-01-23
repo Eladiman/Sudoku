@@ -52,7 +52,7 @@ namespace Sudoku.src.Entities.Models
         }
         public bool RemoveAvailableNumber(int number)
         {
-            if (currentNumber==number && number!=0) throw new LogicalException(); //attempt to execute an invalid board state
+            if (currentNumber == number && number!=0) throw new LogicalException(); //attempt to execute an invalid board state
             if (_tiles.Contains(number) && currentNumber == 0)
             {
                 _tiles.Remove(number);
