@@ -32,5 +32,13 @@ namespace Sudoku.src.Entities.Models
             get { return y; }
             set { y = value; }
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null) return false;
+            Coordinate other = (Coordinate)obj;
+            if(x == other.x && y == other.y) return true;
+            return false;
+        }
     }
 }

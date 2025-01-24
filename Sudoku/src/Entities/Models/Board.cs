@@ -16,11 +16,11 @@ namespace Sudoku.src.Entities.Models
     {
         private Coordinate currentTile;
 
-        private ArrayList fullCells;
+        private List<Coordinate> fullCells;
 
         private int lastFullCellIndex;
 
-        private ArrayList emptyCells;
+        private List<Coordinate> emptyCells;
 
         private ITile[,] board;
 
@@ -30,9 +30,9 @@ namespace Sudoku.src.Entities.Models
 
             currentTile = new Coordinate();
 
-            fullCells = new ArrayList();
+            fullCells = new List<Coordinate>();
             lastFullCellIndex = 0;
-            emptyCells = new ArrayList();
+            emptyCells = new List<Coordinate>();
 
             InitializeBoard(expression);
 
@@ -63,30 +63,6 @@ namespace Sudoku.src.Entities.Models
             get { return new Coordinate(currentTile.X, currentTile.Y); }
         }
 
-        public Coordinate NextTile()
-        {
-            int currentX = currentTile.X + 1;
-            int currentY = currentTile.Y + 1;
-            if (NextRow(currentX, currentY))
-            {
-                if (currentX == Constants.Board_size) currentX = 0;
-                currentX++;
-                currentY = 1;
-            }
-            else
-            {
-                currentY++;
-            }
-            currentTile.X = currentX - 1;
-            currentTile.Y = currentY - 1;
-            return new Coordinate(currentTile.X, currentTile.Y);
-        }
-
-        private bool NextRow(int currentX, int currentY)
-        {
-            return currentY == Constants.Board_size;
-        }
-
         public bool UpdateRow(Coordinate coordinate)
         {
             bool hasChange = false;
@@ -101,6 +77,7 @@ namespace Sudoku.src.Entities.Models
                     {
                         board[coordinate.X, col].UpdateCurrentNumber();
                         fullCells.Add(board[coordinate.X, col].GetCoordinate());
+                        emptyCells.Remove(board[coordinate.X, col].GetCoordinate());
                     }
                     hasChange = true;
                 }
@@ -121,6 +98,7 @@ namespace Sudoku.src.Entities.Models
                     {
                         board[row, coordinate.Y].UpdateCurrentNumber();
                         fullCells.Add(board[row, coordinate.Y].GetCoordinate());
+                        emptyCells.Remove(board[row, coordinate.Y].GetCoordinate());
                     }
                     hasChange = true;
                 }
@@ -149,6 +127,7 @@ namespace Sudoku.src.Entities.Models
                         {
                             board[startOfBoxRow + row, startOfBoxCol + col].UpdateCurrentNumber();
                             fullCells.Add(board[startOfBoxRow + row, startOfBoxCol + col].GetCoordinate());
+                            emptyCells.Remove(board[startOfBoxRow + row, startOfBoxCol + col].GetCoordinate());
                         }
                         hasChange = true;
                     }
@@ -179,7 +158,7 @@ namespace Sudoku.src.Entities.Models
             bool hasChange = false;
             for(;lastFullCellIndex < fullCells.Count;lastFullCellIndex++)
             {
-                if (UpdateTile((Coordinate)fullCells[lastFullCellIndex]))
+                if (UpdateTile(fullCells[lastFullCellIndex]))
                 {
                     hasChange = true;
                 }
@@ -190,6 +169,11 @@ namespace Sudoku.src.Entities.Models
         public void AddFullCell(Coordinate coordinate)
         {
             fullCells.Add(coordinate);
+        }
+
+        public void RemoveEmptyCell(Coordinate coordinate)
+        {
+            emptyCells.Remove(coordinate);
         }
 
         public void RestoreFullCells(int lastIndex)
@@ -294,15 +278,12 @@ namespace Sudoku.src.Entities.Models
         {
             ITile minTile = null;
             int minCount = Constants.Board_size;
-            for (int row = 0; row < Constants.Board_size; row++)
+            foreach(Coordinate coordinate in emptyCells) 
             {
-                for (int col = 0; col < Constants.Board_size; col++)
+                if (board[coordinate.X,coordinate.Y].GetSize() <= minCount)
                 {
-                    if (board[row, col].GetCurrentNumber() == 0 && board[row, col].GetSize() <= minCount)
-                    {
-                        minCount = board[row, col].GetSize();
-                        minTile = board[row,col];
-                    }
+                    minCount = board[coordinate.X, coordinate.Y].GetSize();
+                    minTile = board[coordinate.X, coordinate.Y];
                 }
             }
             return minTile;
@@ -310,26 +291,22 @@ namespace Sudoku.src.Entities.Models
 
         public Dictionary<Coordinate,HashSet<int>> SaveBoardState()
         {
-            Dictionary<Coordinate, HashSet<int>> savedCoordinates = new Dictionary<Coordinate, HashSet<int>>();
-            for (int row = 0; row < Constants.Board_size; row++)
+            Dictionary<Coordinate, HashSet<int>> savedCoordinates = new Dictionary<Coordinate, HashSet<int>>(emptyCells.Count);
+            foreach (Coordinate cell in emptyCells)
             {
-                for (int col = 0; col < Constants.Board_size; col++)
-                {
-                    if (board[row, col].GetCurrentNumber() == 0)
-                    {
-                        savedCoordinates.Add(board[row, col].GetCoordinate(), board[row,col].GetAvailableNumbers());
-                    }
-                }
+                savedCoordinates.Add(cell, board[cell.X,cell.Y].GetAvailableNumbers());
             }
             return savedCoordinates;
         }
 
         public void RestoreBoardState(Dictionary<Coordinate, HashSet<int>> boardState)
         {
+            emptyCells.Clear();
             foreach(Coordinate restoredTilePlace in boardState.Keys)
             {
                 board[restoredTilePlace.X, restoredTilePlace.Y].SetCurrentNumber(0);
                 board[restoredTilePlace.X, restoredTilePlace.Y].SetAvailableNumbers(boardState[restoredTilePlace]);
+                emptyCells.Add(restoredTilePlace);
             }
         }
 

@@ -41,6 +41,7 @@ namespace Sudoku.src.Logic
                     smallestTile.SetCurrentNumber(currentPossibility);
                     board.ReplaceTile(smallestTile);
                     board.AddFullCell(smallestTile.GetCoordinate());
+                    board.RemoveEmptyCell(smallestTile.GetCoordinate());
                     if (SolveBoard(board)) return true;
 
                     board.RestoreBoardState(savedOptions);
