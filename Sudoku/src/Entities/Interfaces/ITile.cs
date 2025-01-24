@@ -28,5 +28,9 @@ namespace Sudoku.src.Entities.Interfaces
 
         public void UpdateCurrentNumberAndDeletePossibilities(int number);
         public bool ContainNumber(int number);
+
+        public int X { get; }
+
+        public int Y { get; }
     }
 }

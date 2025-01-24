@@ -13,7 +13,7 @@ namespace Sudoku.src
     {
         public static void Main(string[] args)
         {
-            Board board = new Board("400000805030000000000700000020000060000080400000010000000006030705002000001040000");
+            Board board = new Board("900800000000000500000000000020010003010000060000400070708600000000030100400000200");
             Console.WriteLine(board);
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();

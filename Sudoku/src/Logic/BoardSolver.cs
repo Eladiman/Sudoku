@@ -23,14 +23,14 @@ namespace Sudoku.src.Logic
 
             ITile smallestTile = board.GetSmallestTile();
 
-            Dictionary<Coordinate, HashSet<int>> savedOptions = new Dictionary<Coordinate, HashSet<int>>();
+            Dictionary<(int,int), HashSet<int>> savedOptions = new Dictionary<(int,int), HashSet<int>>();
 
             return SolveBoardWithRecursion(smallestTile,board);
         }
 
         private static bool SolveBoardWithRecursion(ITile smallestTile,Board board)
         {
-            Dictionary<Coordinate, HashSet<int>> savedOptions = new Dictionary<Coordinate, HashSet<int>>();
+            Dictionary<(int, int), HashSet<int>> savedOptions = new Dictionary<(int, int), HashSet<int>>();
             int lastFullCellIndex = board.GetLastFullCellIndex();
 
             foreach (int currentPossibility in smallestTile.GetAvailableNumbers())
@@ -40,8 +40,8 @@ namespace Sudoku.src.Logic
                     savedOptions = board.SaveBoardState();
                     smallestTile.SetCurrentNumber(currentPossibility);
                     board.ReplaceTile(smallestTile);
-                    board.AddFullCell(smallestTile.GetCoordinate());
-                    board.RemoveEmptyCell(smallestTile.GetCoordinate());
+                    board.AddFullCell(smallestTile.X,smallestTile.Y);
+                    board.RemoveEmptyCell(smallestTile.X, smallestTile.Y);
                     if (SolveBoard(board)) return true;
 
                     board.RestoreBoardState(savedOptions);
