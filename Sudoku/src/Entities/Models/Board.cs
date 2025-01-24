@@ -123,7 +123,7 @@ namespace Sudoku.src.Entities.Models
                         && board[startOfBoxRow + row, startOfBoxCol + col].RemoveAvailableNumber(number))
                     {
                         if (board[startOfBoxRow + row, startOfBoxCol + col].GetSize() == 0) throw new LogicalException();
-                        if (board[startOfBoxRow + row, startOfBoxCol + col].GetSize() == 1)
+                        if (board[startOfBoxRow + row, startOfBoxCol + col].GetSize() == 1 && board[startOfBoxRow + row, startOfBoxCol + col].GetCurrentNumber() == 0)
                         {
                             board[startOfBoxRow + row, startOfBoxCol + col].UpdateCurrentNumber();
                             fullCells.Add(board[startOfBoxRow + row, startOfBoxCol + col].GetCoordinate());

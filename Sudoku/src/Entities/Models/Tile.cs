@@ -11,16 +11,19 @@ namespace Sudoku.src.Entities.Models
 {
     public class Tile : ITile
     {
-        private Coordinate place;
+        public int X { get; private set; }
+        
+        public int Y { get; private set; }
 
         private HashSet<int> _tiles;
        
         private int currentNumber;
 
-        public Tile(int number, Coordinate coordinate)
+        public Tile(int number, int x, int y)
         {
             _tiles = new HashSet<int>();
-            place = coordinate;
+            X = x;
+            Y = y;
             currentNumber = 0;
             if (number != 0) { 
                 _tiles.Add(number);
@@ -52,7 +55,8 @@ namespace Sudoku.src.Entities.Models
         }
         public bool RemoveAvailableNumber(int number)
         {
-            if (currentNumber == number && number!=0) throw new LogicalException(); //attempt to execute an invalid board state
+            if (currentNumber == number && number != 0) throw new LogicalException(); //attempt to execute an invalid board state
+            
             if (_tiles.Contains(number) && currentNumber == 0)
             {
                 _tiles.Remove(number);
@@ -79,11 +83,6 @@ namespace Sudoku.src.Entities.Models
         public void SetCurrentNumber(int number)
         {
             currentNumber = number;
-        }
-
-        public Coordinate GetCoordinate()
-        {
-            return new Coordinate(place.X,place.Y);
         }
 
         public bool ContainNumber(int number)
