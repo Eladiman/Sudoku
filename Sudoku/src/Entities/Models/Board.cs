@@ -1,4 +1,5 @@
 ﻿
+using Sudoku.src.Consts;
 using Sudoku.src.Entities.Exceptions;
 using Sudoku.src.Entities.Interfaces;
 using System;
@@ -55,12 +56,6 @@ namespace Sudoku.src.Entities.Models
                     index++;   
                 }
             }
-        }
-
-
-        public Coordinate CurrentTile
-        {
-            get { return new Coordinate(currentTile.X, currentTile.Y); }
         }
 
         public bool UpdateRow(Coordinate coordinate)

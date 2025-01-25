@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sudoku.src
+namespace Sudoku.src.Consts
 {
     public static class Constants
     {

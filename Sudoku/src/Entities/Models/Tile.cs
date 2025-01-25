@@ -1,4 +1,5 @@
-﻿using Sudoku.src.Entities.Exceptions;
+﻿using Sudoku.src.Consts;
+using Sudoku.src.Entities.Exceptions;
 using Sudoku.src.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
