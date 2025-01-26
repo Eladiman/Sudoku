@@ -13,7 +13,9 @@ namespace Sudoku.src
     {
         public static void Main(string[] args)
         {
-            Board board = new Board("000000015020060000000000408003000900000100000000008000150400000000070300800000060");
+            string str = "000000000000003085001020000000507000004000100090000000500000073002010000000040009\r\n";
+            str = str.Replace('.', '0');
+            Board board = new Board(str);
             Console.WriteLine(board);
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sudoku.src.Consts
 {
-    public static class Constants
+    public static class SudokuConstants
     {
         public const int Board_size = 9;
 

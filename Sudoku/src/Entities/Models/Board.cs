@@ -9,7 +9,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Sudoku.src.Entities.Models
 {
@@ -27,7 +26,7 @@ namespace Sudoku.src.Entities.Models
 
         public Board(string expression)
         {
-            board = new Tile[Constants.Board_size, Constants.Board_size];
+            board = new Tile[SudokuConstants.Board_size, SudokuConstants.Board_size];
 
             currentTile = new Coordinate();
 
@@ -44,9 +43,9 @@ namespace Sudoku.src.Entities.Models
             int index = 0;
             int currentNumber = 0;
             Coordinate currentCoordinate;
-            for (int row = 0; row < Constants.Board_size; row++)
+            for (int row = 0; row < SudokuConstants.Board_size; row++)
             {
-                for (int col = 0; col < Constants.Board_size; col++)
+                for (int col = 0; col < SudokuConstants.Board_size; col++)
                 {
                     currentNumber = expression[index] - '0';
                     currentCoordinate = new Coordinate(row, col);
@@ -56,109 +55,6 @@ namespace Sudoku.src.Entities.Models
                     index++;   
                 }
             }
-        }
-
-        public bool UpdateRow(Coordinate coordinate)
-        {
-            bool hasChange = false;
-            int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
-            if (number == 0) return false;
-            for (int col = 0; col < Constants.Board_size; col++)
-            {
-                if (col != coordinate.Y && board[coordinate.X, col].RemoveAvailableNumber(number))
-                {
-                    if (board[coordinate.X, col].GetSize() == 0) throw new LogicalException();
-                    if (board[coordinate.X, col].GetSize() == 1)
-                    {
-                        board[coordinate.X, col].UpdateCurrentNumber();
-                        fullCells.Add(board[coordinate.X, col].GetCoordinate());
-                        emptyCells.Remove(board[coordinate.X, col].GetCoordinate());
-                    }
-                    hasChange = true;
-                }
-            }
-            return hasChange;
-        }
-        public bool UpdateCol(Coordinate coordinate)
-        {
-            bool hasChange = false;
-            int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
-            if (number == 0) return false;
-            for (int row = 0; row < Constants.Board_size; row++)
-            {
-                if (row != coordinate.X && board[row, coordinate.Y].RemoveAvailableNumber(number))
-                {
-                    if (board[row, coordinate.Y].GetSize() == 0) throw new LogicalException();
-                    if (board[row, coordinate.Y].GetSize() == 1)
-                    {
-                        board[row, coordinate.Y].UpdateCurrentNumber();
-                        fullCells.Add(board[row, coordinate.Y].GetCoordinate());
-                        emptyCells.Remove(board[row, coordinate.Y].GetCoordinate());
-                    }
-                    hasChange = true;
-                }
-            }
-            return hasChange;
-        }
-
-        public bool UpdateBlock(Coordinate coordinate)
-        {
-            bool hasChange = false;
-            int number = board[coordinate.X, coordinate.Y].GetCurrentNumber();
-            if (number == 0) return false;
-            Coordinate startOfBox = findStartOfBox(coordinate);
-            int startOfBoxRow = startOfBox.X;
-            int startOfBoxCol = startOfBox.Y;
-            for(int row = 0;row<Constants.Sqrt_Board_size;row++)
-            {
-                for(int col = 0;col < Constants.Sqrt_Board_size;col++)
-                {
-                    if(startOfBoxRow + row != coordinate.X 
-                        && startOfBoxCol + col!= coordinate.Y
-                        && board[startOfBoxRow + row, startOfBoxCol + col].RemoveAvailableNumber(number))
-                    {
-                        if (board[startOfBoxRow + row, startOfBoxCol + col].GetSize() == 0) throw new LogicalException();
-                        if (board[startOfBoxRow + row, startOfBoxCol + col].GetSize() == 1)
-                        {
-                            board[startOfBoxRow + row, startOfBoxCol + col].UpdateCurrentNumber();
-                            fullCells.Add(board[startOfBoxRow + row, startOfBoxCol + col].GetCoordinate());
-                            emptyCells.Remove(board[startOfBoxRow + row, startOfBoxCol + col].GetCoordinate());
-                        }
-                        hasChange = true;
-                    }
-                        
-                }
-            }
-            return hasChange;
-        }
-
-        private Coordinate findStartOfBox(Coordinate coordinate)
-        {
-            int X = ((coordinate.X)/Constants.Sqrt_Board_size) * Constants.Sqrt_Board_size;
-            int Y = ((coordinate.Y) / Constants.Sqrt_Board_size) * Constants.Sqrt_Board_size;
-            return new Coordinate(X, Y);
-        }
-
-        public bool UpdateTile(Coordinate coordinate)
-        {
-            bool hasChange = false;
-            if (UpdateRow(coordinate)) hasChange = true;
-            if (UpdateCol(coordinate)) hasChange = true;
-            if (UpdateBlock(coordinate)) hasChange = true;
-            return hasChange;
-        }
-
-        public bool FullCellsCheck()
-        {
-            bool hasChange = false;
-            for(;lastFullCellIndex < fullCells.Count;lastFullCellIndex++)
-            {
-                if (UpdateTile(fullCells[lastFullCellIndex]))
-                {
-                    hasChange = true;
-                }
-            }
-            return hasChange ;
         }
 
         public void AddFullCell(Coordinate coordinate)
@@ -182,97 +78,16 @@ namespace Sudoku.src.Entities.Models
         }
 
         public int GetLastFullCellIndex() { return lastFullCellIndex; }
-        public bool ImplementHiddenSingle(Coordinate coordinate)
-        {
-            return ImplementHiddenSingleRow(coordinate) || ImplementHiddenSingleCol(coordinate) || ImplementHiddenSingleBlock(coordinate);
-        }
-
-        private bool ImplementHiddenSingleBlock(Coordinate coordinate)
-        {
-            bool ValidPossibility = true;
-            ITile currentTile = board[coordinate.X, coordinate.Y];
-            if (currentTile.GetCurrentNumber() != 0) return false;
-            Coordinate startOfBox = findStartOfBox(coordinate);
-            int startOfBoxRow = startOfBox.X;
-            int startOfBoxCol = startOfBox.Y;
-            foreach (int possibility in currentTile.GetAvailableNumbers())
-            {
-                ValidPossibility = false;
-                int row = 0;
-                int col = 0;
-
-                for (; row < Constants.Sqrt_Board_size && ValidPossibility; row++)
-                {
-                    for (col = 0; col < Constants.Sqrt_Board_size && ValidPossibility ; col++)
-                    {
-                        if (startOfBoxRow + row != coordinate.X
-                            && startOfBoxCol + col != coordinate.Y
-                            && board[startOfBoxRow + row, startOfBoxCol + col].ContainNumber(possibility)) ValidPossibility = false;
-                    }
-                }
-
-                if (ValidPossibility)
-                {
-                    board[startOfBoxRow + row - 1, startOfBoxCol + col - 1].SetCurrentNumber(possibility);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool ImplementHiddenSingleCol(Coordinate coordinate)
-        {
-            bool ValidPossibility = true;
-            ITile currentTile = board[coordinate.X, coordinate.Y];
-            if (currentTile.GetCurrentNumber() != 0) return false;
-            foreach (int possibility in currentTile.GetAvailableNumbers())
-            {
-                ValidPossibility = false;
-                int row = 0;
-                for (; row < Constants.Board_size && ValidPossibility; row++)
-                {
-                    if (row != coordinate.X && board[row, coordinate.Y].ContainNumber(possibility)) ValidPossibility = false;
-                }
-                if (ValidPossibility)
-                {
-                    board[row - 1, coordinate.Y].SetCurrentNumber(possibility);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool ImplementHiddenSingleRow(Coordinate coordinate)
-        {
-            bool ValidPossibility = true;
-            ITile currentTile = board[coordinate.X, coordinate.Y];
-            if (currentTile.GetCurrentNumber() != 0) return false;
-            foreach (int possibility in currentTile.GetAvailableNumbers())
-            {
-                ValidPossibility = false;
-                int col = 0;
-                for (; col < Constants.Board_size && ValidPossibility; col++)
-                {
-                    if (col != coordinate.Y && board[coordinate.X, col].ContainNumber(possibility)) ValidPossibility = false;
-                }
-                if (ValidPossibility)
-                {
-                    board[coordinate.X, col -1].SetCurrentNumber(possibility);
-                    return true;
-                }
-            }
-            return false;
-        }
 
         public bool IsBoardFull()
         {
-            return fullCells.Count == Constants.Board_size * Constants.Board_size;  
+            return fullCells.Count == SudokuConstants.Board_size * SudokuConstants.Board_size;  
         }
 
         public ITile GetSmallestTile()
         {
             ITile minTile = null;
-            int minCount = Constants.Board_size;
+            int minCount = SudokuConstants.Board_size;
             foreach(Coordinate coordinate in emptyCells) 
             {
                 if (board[coordinate.X,coordinate.Y].GetSize() <= minCount)
@@ -307,19 +122,19 @@ namespace Sudoku.src.Entities.Models
 
         public override System.String ToString()
         {
-            int MaxDigits = CountDigits(Constants.Board_size);
+            int MaxDigits = CountDigits(SudokuConstants.Board_size);
             StringBuilder sb = new StringBuilder();
-            for (int Y = 0; Y < Constants.Board_size; ++Y)
+            for (int Y = 0; Y < SudokuConstants.Board_size; ++Y)
             {
-                if (Y % Constants.Sqrt_Board_size == 0)
+                if (Y % SudokuConstants.Sqrt_Board_size == 0)
                 {
-                    sb.Append('-', (Constants.Board_size + Constants.Sqrt_Board_size) * (MaxDigits + 1) + 1);
+                    sb.Append('-', (SudokuConstants.Board_size + SudokuConstants.Sqrt_Board_size) * (MaxDigits + 1) + 1);
                     sb.Append('\n',1);
                 }
 
-                for (int X = 0; X < Constants.Board_size; ++X)
+                for (int X = 0; X < SudokuConstants.Board_size; ++X)
                 {
-                    if (X % Constants.Sqrt_Board_size == 0)
+                    if (X % SudokuConstants.Sqrt_Board_size == 0)
                     {
                         sb.Append('|',1);
                         sb.Append(' ',MaxDigits);
@@ -335,7 +150,7 @@ namespace Sudoku.src.Entities.Models
                 sb.Append('\n', 1);
             }
 
-            sb.Append('-', (Constants.Board_size + Constants.Sqrt_Board_size) * (MaxDigits + 1) + 1);
+            sb.Append('-', (SudokuConstants.Board_size + SudokuConstants.Sqrt_Board_size) * (MaxDigits + 1) + 1);
             sb.Append('\n', 1);
 
             return sb.ToString();
@@ -356,5 +171,62 @@ namespace Sudoku.src.Entities.Models
             board[tile.GetCoordinate().X, tile.GetCoordinate().Y] = tile;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns> return the number of Full Cells </returns>
+        public int FullCellsSize()
+        {
+            return fullCells.Count;
+        }
+        /// <summary>
+        /// given an index it will return the coordinate of the full cell
+        /// from the FullCells list
+        /// </summary>
+        /// <param name="lastFullCellIndex"></param>
+        /// <returns></returns>
+        public Coordinate GetFullCellCoordinate(int lastFullCellIndex)
+        {
+            return fullCells[lastFullCellIndex];
+        }
+        /// <summary>
+        /// updates lastFullCellIndex to the given parameter
+        /// </summary>
+        /// <param name="lastFullCellIndex1"></param>
+        public void SetLastFullCellIndex(int lastFullCellIndex1)
+        {
+            this.lastFullCellIndex = lastFullCellIndex1;
+        }
+        /// <summary>
+        /// return the Tile from the specific coordinate
+        /// </summary>
+        /// <param name="coordinate"></param>
+        /// <returns></returns>
+        public ITile GetTile(Coordinate coordinate)
+        {
+            return board[coordinate.X, coordinate.Y];
+        }
+
+        /// <summary>
+        /// Gets location and number. 
+        /// Assuming the Tile is empty then the number will be deleted from its options. 
+        /// If the Tile left with no possibilities after that then an exception will be thrown. 
+        /// And if there is only one option after deletion, then the cell becomes its option.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="number"></param>
+        /// <exception cref="LogicalException"> board is not solvable </exception>
+        public void RemoveNumber(int x, int y, int number)
+        {
+            board[x,y].RemoveAvailableNumber(number);
+            if (board[x, y].GetSize() == 0) throw new LogicalException();
+            if (board[x,y].GetCurrentNumber() == 0 && board[x, y].GetSize() == 1)
+            {
+                board[x, y].UpdateCurrentNumber();
+                fullCells.Add(board[x, y].GetCoordinate());
+                emptyCells.Remove(board[x, y].GetCoordinate());
+            }
+        }
     }
 }

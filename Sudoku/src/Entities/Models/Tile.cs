@@ -28,7 +28,7 @@ namespace Sudoku.src.Entities.Models
                 currentNumber = number;
             }
             else { 
-                for(int numberToFill = 1 ;numberToFill<=Constants.Board_size;numberToFill++)
+                for(int numberToFill = 1 ;numberToFill<=SudokuConstants.Board_size;numberToFill++)
                 {
                     AddNumber(numberToFill);
                 }
@@ -53,8 +53,8 @@ namespace Sudoku.src.Entities.Models
         }
         public bool RemoveAvailableNumber(int number)
         {
-            if (currentNumber == number && number!=0) throw new LogicalException(); //attempt to execute an invalid board state
-            if (_tiles.Contains(number) && currentNumber == 0)
+            if (currentNumber != 0 && currentNumber == number) throw new LogicalException(); //attempt to execute an invalid board state
+            if (currentNumber == 0 && _tiles.Contains(number))
             {
                 _tiles.Remove(number);
                 return true;
@@ -84,7 +84,7 @@ namespace Sudoku.src.Entities.Models
 
         public Coordinate GetCoordinate()
         {
-            return new Coordinate(place.X,place.Y);
+            return place;
         }
 
         public bool ContainNumber(int number)

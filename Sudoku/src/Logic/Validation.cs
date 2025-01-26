@@ -13,8 +13,8 @@ namespace Sudoku.src.Logic
         public static void CheckLength(string expression)
         {
             if (expression == null) throw new SyntaxException("Expression can't be empty!");
-            if (expression.Length != Constants.Board_size * Constants.Board_size)
-                throw new SyntaxException($"expression Length is not Valid! should be: {Constants.Board_size * Constants.Board_size}!");
+            if (expression.Length != SudokuConstants.Board_size * SudokuConstants.Board_size)
+                throw new SyntaxException($"expression Length is not Valid! should be: {SudokuConstants.Board_size * SudokuConstants.Board_size}!");
         }
         public static void CheckNumber(string expression)
         {
@@ -26,7 +26,7 @@ namespace Sudoku.src.Logic
         }
         public static void CheckNumberCount(string expression)
         {
-            int[] numberCountArray = new int[Constants.Board_size - 1];
+            int[] numberCountArray = new int[SudokuConstants.Board_size - 1];
             int indexOfNumber = 0;
             //fill counter array
             foreach (char number in expression)
@@ -39,10 +39,12 @@ namespace Sudoku.src.Logic
             //a specific number appear more then boars size times
             foreach (int counter in numberCountArray)
             {
-                if (counter > Constants.Board_size)
-                    throw new LogicalException($"The number {indexOfNumber + 1} appeared more then {Constants.Board_size} times. Board is not solvable!");
+                if (counter > SudokuConstants.Board_size)
+                    throw new LogicalException($"The number {indexOfNumber + 1} appeared more then {SudokuConstants.Board_size} times. Board is not solvable!");
                 indexOfNumber++;
             }
         }
+
+
     }
 }
