@@ -206,6 +206,10 @@ namespace Sudoku.src.Entities.Models
         {
             return board[coordinate.X, coordinate.Y];
         }
+        public ITile GetTile(int x,int y)
+        {
+            return board[x,y];
+        }
 
         /// <summary>
         /// Gets location and number. 
@@ -227,6 +231,14 @@ namespace Sudoku.src.Entities.Models
                 fullCells.Add(board[x, y].GetCoordinate());
                 emptyCells.Remove(board[x, y].GetCoordinate());
             }
+        }
+        /// <summary>
+        /// returns the list of empty cells
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<object> GetEmptyCells()
+        {
+            return emptyCells;
         }
     }
 }

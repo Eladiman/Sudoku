@@ -50,7 +50,12 @@ namespace Sudoku.src.Logic
         }
         private static bool SolveBoardWithoutRecursion(Board board)
         {
-            Heuristics.FullCellsCleanUp(board);
+            bool again = true;
+            while(again)
+            {
+                Heuristics.FullCellsCleanUp(board);
+                if (!Heuristics.HiddenSingle(board)) again = false;
+            }
             if (board.IsBoardFull()) return true;
             return false;
         }
