@@ -19,10 +19,8 @@ namespace Sudoku.src.Logic
         /// </summary>
         /// <param name="board"></param>
         /// <returns>True if the board was solved. false otherwise</returns>
-        public static int cnt = 0;
         public static bool SolveBoard(Board board)
         {
-            cnt++;
             try
             {
                 if (SolveBoardWithoutRecursion(board)) return true;

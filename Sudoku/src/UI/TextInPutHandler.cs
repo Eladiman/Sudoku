@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sudoku.src.UI
 {
-    public static class TextInPut
+    public static class TextInPutHandler
     {
         public static string GetInputFromUser()
         {

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Sudoku.src.UI
 {
-    public static class CliInPut
+    public static class CliInPutHandler
     {
         /// <summary>
-        /// read expression from TextFile
+        /// read expression from the cli
         /// </summary>
         /// <returns>
         /// return the expression
@@ -21,5 +21,7 @@ namespace Sudoku.src.UI
             if (str == null) return "";
             return str;
         }
+
+
     }
 }
