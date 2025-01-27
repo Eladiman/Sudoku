@@ -11,5 +11,7 @@ namespace Sudoku.src.Consts
         public const int Board_size = 9;
 
         public const int Sqrt_Board_size = 3;
+
+        public const char ASCII_DIFF = '0';
     }
 }

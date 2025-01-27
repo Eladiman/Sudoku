@@ -31,13 +31,18 @@ namespace Sudoku.src.Entities.Models
             currentTile = new Coordinate();
 
             fullCells = new List<Coordinate>();
+
             lastFullCellIndex = 0;
+
             emptyCells = new List<Coordinate>();
 
             InitializeBoard(expression);
 
         }
-
+        /// <summary>
+        /// Initialize the board from a given string
+        /// </summary>
+        /// <param name="expression"></param>
         private void InitializeBoard(string expression)
         {
             int index = 0;
@@ -47,26 +52,38 @@ namespace Sudoku.src.Entities.Models
             {
                 for (int col = 0; col < SudokuConstants.Board_size; col++)
                 {
-                    currentNumber = expression[index] - '0';
+                    currentNumber = expression[index] - SudokuConstants.ASCII_DIFF;
                     currentCoordinate = new Coordinate(row, col);
                     board[row, col] = new Tile(currentNumber, currentCoordinate);
-                    if (currentNumber!=0) fullCells.Add(currentCoordinate);
-                    else emptyCells.Add(currentCoordinate);
+                    if (currentNumber!=0) fullCells.Add(currentCoordinate);//if full add to full cells list
+                    else emptyCells.Add(currentCoordinate);//if empty add to empty cells list
                     index++;   
                 }
             }
         }
-
+        /// <summary>
+        /// add to full cells list from a given coordinate
+        /// </summary>
+        /// <param name="coordinate"></param>
         public void AddFullCell(Coordinate coordinate)
         {
             fullCells.Add(coordinate);
         }
 
+        /// <summary>
+        /// Remove empty cell from the empty cells list from a given coordinate
+        /// </summary>
+        /// <param name="coordinate"></param>
         public void RemoveEmptyCell(Coordinate coordinate)
         {
             emptyCells.Remove(coordinate);
         }
 
+        /// <summary>
+        /// Gets the index before recursion and deletes all elements up to it.
+        /// Delete the last full cells 
+        /// </summary>
+        /// <param name="lastIndex"></param>
         public void RestoreFullCells(int lastIndex)
         {
             int index = fullCells.Count;
@@ -74,16 +91,28 @@ namespace Sudoku.src.Entities.Models
             {
                 fullCells.RemoveAt(index - 1);
             }
-            lastFullCellIndex = lastIndex;
+            lastFullCellIndex = lastIndex;//update the last full cell index to the lastIndex
         }
 
+        /// <summary>
+        /// return the last full cell index in the full cells list
+        /// </summary>
+        /// <returns></returns>
         public int GetLastFullCellIndex() { return lastFullCellIndex; }
 
+        /// <summary>
+        /// Checks if board is full
+        /// </summary>
+        /// <returns> True if full, false otherwise</returns>
         public bool IsBoardFull()
         {
             return fullCells.Count == SudokuConstants.Board_size * SudokuConstants.Board_size;  
         }
 
+        /// <summary>
+        /// Goes through all empty cells and returns the cell with the fewest options.
+        /// </summary>
+        /// <returns> The cell with the fewest options, null if board is full</returns>
         public ITile GetSmallestTile()
         {
             ITile minTile = null;
@@ -99,6 +128,11 @@ namespace Sudoku.src.Entities.Models
             return minTile;
         }
 
+        /// <summary>
+        /// Goes through all empty cells in the board
+        /// and generates a dictionary of their locations and their possible values
+        /// </summary>
+        /// <returns>dictionary of all empty cells locations and their possible values</returns>
         public Dictionary<Coordinate,HashSet<int>> SaveBoardState()
         {
             Dictionary<Coordinate, HashSet<int>> savedCoordinates = new Dictionary<Coordinate, HashSet<int>>(emptyCells.Count);
@@ -109,6 +143,10 @@ namespace Sudoku.src.Entities.Models
             return savedCoordinates;
         }
 
+        /// <summary>
+        /// Gets a dictionary of empty cells and the options they contained and initializes the board accordingly.
+        /// </summary>
+        /// <param name="boardState"> the wanted board state</param>
         public void RestoreBoardState(Dictionary<Coordinate, HashSet<int>> boardState)
         {
             emptyCells.Clear();
@@ -120,9 +158,15 @@ namespace Sudoku.src.Entities.Models
             }
         }
 
+        /// <summary>
+        /// This function returns a String representation of the board . 
+        /// When the board size is larger than 9X9 
+        /// then the numbers will be displayed according to the following characters in the ASCII table
+        /// </summary>
+        /// <returns>String representation of the board</returns>
         public override System.String ToString()
         {
-            int MaxDigits = CountDigits(SudokuConstants.Board_size);
+            int MaxDigits = 1;
             StringBuilder sb = new StringBuilder();
             for (int Y = 0; Y < SudokuConstants.Board_size; ++Y)
             {
@@ -139,10 +183,9 @@ namespace Sudoku.src.Entities.Models
                         sb.Append('|',1);
                         sb.Append(' ',MaxDigits);
                     }
-
-                    int CellValue = board[Y,X].GetCurrentNumber();
-                    sb.Append(CellValue.ToString());
-                    sb.Append(' ',MaxDigits - CountDigits(CellValue) + 1);
+                    int CellValue = board[Y,X].GetCurrentNumber() + SudokuConstants.ASCII_DIFF;
+                    sb.Append((char)CellValue,1);
+                    sb.Append(' ',1);
                 }
 
                 sb.Append('|', 1);
@@ -156,16 +199,6 @@ namespace Sudoku.src.Entities.Models
             return sb.ToString();
         }
 
-        private static int CountDigits(int cellValue)
-        {
-            int count = 1;
-            while(cellValue > 10)
-            {
-                cellValue /= 10;
-                count += 1;
-            }
-            return count;
-        }
         public void ReplaceTile(ITile tile)
         {
             board[tile.GetCoordinate().X, tile.GetCoordinate().Y] = tile;
@@ -179,6 +212,7 @@ namespace Sudoku.src.Entities.Models
         {
             return fullCells.Count;
         }
+
         /// <summary>
         /// given an index it will return the coordinate of the full cell
         /// from the FullCells list
@@ -189,6 +223,7 @@ namespace Sudoku.src.Entities.Models
         {
             return fullCells[lastFullCellIndex];
         }
+
         /// <summary>
         /// updates lastFullCellIndex to the given parameter
         /// </summary>
@@ -197,6 +232,7 @@ namespace Sudoku.src.Entities.Models
         {
             this.lastFullCellIndex = lastFullCellIndex1;
         }
+
         /// <summary>
         /// return the Tile from the specific coordinate
         /// </summary>
@@ -206,6 +242,12 @@ namespace Sudoku.src.Entities.Models
         {
             return board[coordinate.X, coordinate.Y];
         }
+        /// <summary>
+        /// return Tile from a specific coordinate (represented by row and col)
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public ITile GetTile(int x,int y)
         {
             return board[x,y];
@@ -225,9 +267,9 @@ namespace Sudoku.src.Entities.Models
         {
             board[x,y].RemoveAvailableNumber(number);
             if (board[x, y].GetSize() == 0) throw new LogicalException();
-            if (board[x,y].GetCurrentNumber() == 0 && board[x, y].GetSize() == 1)
+            if (board[x,y].GetCurrentNumber() == 0 && board[x, y].GetSize() == 1) //if 1 option left add the cell to the full cells list
             {
-                board[x, y].UpdateCurrentNumber();
+                board[x, y].UpdateCurrentNumber(); // make the cell full by making him his left option
                 fullCells.Add(board[x, y].GetCoordinate());
                 emptyCells.Remove(board[x, y].GetCoordinate());
             }

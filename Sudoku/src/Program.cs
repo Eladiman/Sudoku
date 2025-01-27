@@ -13,7 +13,7 @@ namespace Sudoku.src
     {
         public static void Main(string[] args)
         {
-            string str = "000030000060000400007050800000406000000900000050010300400000020000300000000000000";
+            string str = "";
             str = str.Replace('.', '0');
             Board board = new Board(str);
             Console.WriteLine(board);
@@ -31,6 +31,7 @@ namespace Sudoku.src
                 Console.WriteLine("Time took: " + stopWatch.ElapsedMilliseconds+" ms");
                 Console.WriteLine("Board is not Solvable");
             }
+            Console.WriteLine($"{BoardSolver.cnt}");
         }
     }
 }
