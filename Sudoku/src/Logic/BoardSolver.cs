@@ -75,7 +75,11 @@ namespace Sudoku.src.Logic
             while(again)
             {
                 BasicHeuristic.FullCellsCleanUp(board);
-                if (!HiddenSingleHeuristics.HiddenSingle(board)) again = false;
+                if (!HiddenSingleHeuristics.HiddenSingle(board))
+                {
+                    again = false;
+                    //if(!NakedPairsHeuristics.NakedPairs(board)) again = false;
+                }
             }
             if (board.IsBoardFull()) return true;
             return false;

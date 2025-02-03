@@ -65,6 +65,8 @@ namespace Sudoku.src.Logic
 
         private static void TrySolveBoard(string expression)
         {
+            Stopwatch stopWatch = new Stopwatch();
+
             string str = expression;
             str = str.Replace('.', '0');
 
@@ -76,7 +78,6 @@ namespace Sudoku.src.Logic
 
             Board board = new Board(str);
             Console.WriteLine(board);
-            Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             if (BoardSolver.SolveBoard(board))
             {

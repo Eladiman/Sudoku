@@ -282,5 +282,38 @@ namespace Sudoku.src.Entities.Models
         {
             return emptyCells;
         }
+
+        public List<ITile> GetEmptyCellsRow(int row)
+        {
+            List<Coordinate> emptyRowCellsCoordinates = emptyCells.Where(coordinate=>coordinate.X == row).ToList();
+            List<ITile> emptyRowCells = new List<ITile>();
+            foreach (Coordinate coord in emptyRowCellsCoordinates)
+            {
+                emptyRowCells.Add(GetTile(coord));
+            }
+            return emptyRowCells;
+        }
+
+        public List<ITile> GetEmptyCellsCol(int col)
+        {
+            List<Coordinate> emptyColCellsCoordinates = emptyCells.Where(coordinate => coordinate.Y == col).ToList();
+            List<ITile> emptyColCells = new List<ITile>();
+            foreach (Coordinate coord in emptyColCellsCoordinates)
+            {
+                emptyColCells.Add(GetTile(coord));
+            }
+            return emptyColCells;
+        }
+
+        public List<ITile> GetEmptyCellsBox(int row, int col)
+        {
+            List<Coordinate> emptyColCellsCoordinates = emptyCells.Where(coordinate => coordinate.X < row +SudokuConstants.Sqrt_Board_size &&coordinate.X>=row && coordinate.Y < col + SudokuConstants.Sqrt_Board_size && coordinate.Y >= col).ToList();
+            List<ITile> emptyBoxCells = new List<ITile>();
+            foreach (Coordinate coord in emptyColCellsCoordinates)
+            {
+                emptyBoxCells.Add(GetTile(coord));
+            }
+            return emptyBoxCells;
+        }
     }
 }

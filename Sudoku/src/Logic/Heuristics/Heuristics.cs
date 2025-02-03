@@ -14,15 +14,6 @@ namespace Sudoku.src.Logic.Heuristics
     public static class Heuristics
     {
         /// <summary>
-        /// Goes through all the empty cells and if it detects two cells with the same 2 options
-        /// then Removes these options from the row/column/box where they were found
-        /// </summary>
-        /// <param name="board">The board on which the function will run</param>
-        public static void NakedPairs(Board board)
-        {
-
-        }
-        /// <summary>
         /// Goes through all the cells and looks for a cell that has only one option left.
         /// and then it adds the cell to the list of full cells
         /// </summary>

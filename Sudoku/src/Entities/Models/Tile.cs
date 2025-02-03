@@ -98,5 +98,13 @@ namespace Sudoku.src.Entities.Models
             _tiles.Add(number);
             currentNumber = number;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null) return false;
+            Tile other = (Tile)obj;
+            if (_tiles.Equals(other._tiles)) return true;
+            return false;
+        }
     }
 }
