@@ -1,6 +1,7 @@
 ﻿using Sudoku.src.Consts;
 using Sudoku.src.Entities.Models;
-using Sudoku.src.UI;
+using Sudoku.src.UI.InPut;
+using Sudoku.src.UI.OutPut;
 using System.Diagnostics;
 
 namespace Sudoku.src.Logic
@@ -20,11 +21,7 @@ namespace Sudoku.src.Logic
             {
                 try
                 {
-                    string expression = GetExpression();
-                    if (expression != null)
-                    {
-                        TrySolveBoard(expression);
-                    }
+                    mainGameManager();
                 }
                 catch (Exception e)
                 {
@@ -34,20 +31,19 @@ namespace Sudoku.src.Logic
                 }
             }
         }
+
         /// <summary>
         /// The following function receives the user's chosen option and operates accordingly.
         /// 1. gets board from cli
         /// 2. gets board from text file
         /// 3. exit the program
         /// </summary>
-        /// <returns>
-        /// the expression given from the user
-        /// </returns>
-        private static string GetExpression()
+        private static void mainGameManager()
         {
             ShowMenu();
             String option = Console.ReadLine();
             String expression = null;
+            String filePath = null;
             switch (option)
             {
                 case "1":
@@ -56,7 +52,11 @@ namespace Sudoku.src.Logic
                     break;
 
                 case "2":
-                    expression = TextInPutHandler.GetInputFromUser();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Enter file path: ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    filePath = Console.ReadLine(); //get file path from user
+                    expression = TextInPutHandler.GetInputFromUser(filePath);
                     break;
 
                 case "3":
@@ -70,14 +70,19 @@ namespace Sudoku.src.Logic
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
             }
-            return expression;
+            if (expression != null)
+            {
+                TrySolveBoard(expression, filePath); //attempted to solve the board
+            }
         }
+
         /// <summary>
         /// The following function receives an expression, checks whether it is solvable,
         /// and prints whether it is solvable along with its solution, or if it is unsolvable.
         /// </summary>
         /// <param name="expression">the expression to solve</param>
-        private static void TrySolveBoard(string expression)
+        /// <param name="path">The path of the txt file. if path not null then put the result on the file</param>
+        private static void TrySolveBoard(string expression,string path)
         {
             Stopwatch stopWatch = new Stopwatch();
 
@@ -93,21 +98,13 @@ namespace Sudoku.src.Logic
             Board board = new Board(str);
             Console.WriteLine(board);
             stopWatch.Start();
-            if (BoardSolver.SolveBoard(board))
-            {
-                stopWatch.Stop();
-                Console.WriteLine(board);
-            }
-            else
-            {
-                stopWatch.Stop();
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Board is not Solvable");
-            }
+            bool solved = BoardSolver.SolveBoard(board);
+            stopWatch.Stop();
 
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Time took: " + stopWatch.ElapsedMilliseconds + " ms");
-            Console.ForegroundColor = ConsoleColor.White;
+            CliOutPutHandler.PrintInputForUser(board,stopWatch,solved);
+
+            if(path!=null) TextOutPutHandler.PrintInputForUserInText(board, stopWatch,solved,path);
+
             //Console.WriteLine($"{BoardSolver.cnt}");
         }
 

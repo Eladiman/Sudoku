@@ -1,4 +1,4 @@
-﻿namespace Sudoku.src.UI
+﻿namespace Sudoku.src.UI.InPut
 {
     public static class TextInPutHandler
     {
@@ -8,13 +8,8 @@
         /// <returns>
         /// return the expression
         /// </returns>
-        public static string GetInputFromUser()
+        public static string GetInputFromUser(string filePath)
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Enter file path: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            string filePath = Console.ReadLine();
-
             if (filePath == null) return "";
 
             filePath = filePath.Trim();

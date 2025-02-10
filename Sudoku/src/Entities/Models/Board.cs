@@ -323,5 +323,20 @@ namespace Sudoku.src.Entities.Models
             }
             return emptyBoxCells;
         }
+
+        public string GetString()
+        {
+            StringBuilder sb = new StringBuilder();
+            int currentNumber = 0;
+            for (int row = 0; row < SudokuConstants.Board_size; row++)
+            {
+                for (int col = 0; col < SudokuConstants.Board_size; col++)
+                {
+                    currentNumber = board[row, col].GetCurrentNumber() + SudokuConstants.ASCII_DIFF;
+                    sb.Append((char)currentNumber,1);
+                }
+            }
+            return sb.ToString();
+        }
     }
 }

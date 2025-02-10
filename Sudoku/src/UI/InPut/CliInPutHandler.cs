@@ -1,4 +1,4 @@
-﻿namespace Sudoku.src.UI
+﻿namespace Sudoku.src.UI.InPut
 {
     public static class CliInPutHandler
     {
@@ -10,7 +10,7 @@
         /// </returns>
         public static string GetInputFromUser()
         {
-            String str = Console.ReadLine();
+            string str = Console.ReadLine();
             if (str == null) return "";
             return str;
         }
