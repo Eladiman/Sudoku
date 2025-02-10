@@ -1,21 +1,19 @@
 ﻿using Sudoku.src.Consts;
-using Sudoku.src.Entities.Exceptions;
 using Sudoku.src.Entities.Models;
 using Sudoku.src.UI;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sudoku.src.Logic
 {
     public static class MainController
     {
-        private static bool  run = true;
-        
+        private static bool run = true;
+
+
+        /// <summary>
+        /// The following function runs as long as the user hasn't pressed 3 (for exit)
+        /// and constantly allows the user to input new boards and solve them.
+        /// </summary>
         public static void Run()
         {
             while (run)
@@ -28,13 +26,23 @@ namespace Sudoku.src.Logic
                         TrySolveBoard(expression);
                     }
                 }
-                catch (Exception e) when (e is SyntaxException || e is LogicalException || e is OutOfMemoryException || e is IOException || e is ArgumentOutOfRangeException)
+                catch (Exception e)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(e.Message);
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
             }
         }
-
+        /// <summary>
+        /// The following function receives the user's chosen option and operates accordingly.
+        /// 1. gets board from cli
+        /// 2. gets board from text file
+        /// 3. exit the program
+        /// </summary>
+        /// <returns>
+        /// the expression given from the user
+        /// </returns>
         private static string GetExpression()
         {
             ShowMenu();
@@ -57,12 +65,18 @@ namespace Sudoku.src.Logic
                     break;
 
                 default:
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Option is not valid! please enter 1,2 or 3!");
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
             }
             return expression;
         }
-
+        /// <summary>
+        /// The following function receives an expression, checks whether it is solvable,
+        /// and prints whether it is solvable along with its solution, or if it is unsolvable.
+        /// </summary>
+        /// <param name="expression">the expression to solve</param>
         private static void TrySolveBoard(string expression)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -83,24 +97,34 @@ namespace Sudoku.src.Logic
             {
                 stopWatch.Stop();
                 Console.WriteLine(board);
-                Console.WriteLine("Time took: " + stopWatch.ElapsedMilliseconds + " ms");
             }
             else
             {
                 stopWatch.Stop();
+                Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine("Board is not Solvable");
-                Console.WriteLine("Time took: " + stopWatch.ElapsedMilliseconds + " ms");
-                
             }
+
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Time took: " + stopWatch.ElapsedMilliseconds + " ms");
+            Console.ForegroundColor = ConsoleColor.White;
             //Console.WriteLine($"{BoardSolver.cnt}");
         }
 
+        /// <summary>
+        /// The following function displays a menu of different actions in the system to the user via the CLI.
+        /// </summary>
         private static void ShowMenu()
         {
-            Console.WriteLine("\nPlease enter your Sudoku!: " +
-                "\n1. Insert Sudoku using the command line."+
-                "\n2. Insert Sudoku using a text file."+
-                "\n3. Exit the Program");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("\n=== SUDOKU SOLVER ===\n");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("1. Input via Console");
+            Console.WriteLine("2. Input via Text File");
+            Console.WriteLine("3. Exit\n");
+
+            Console.Write("Enter your choice: ");
         }
     }
 }
