@@ -78,7 +78,7 @@ namespace Sudoku.src.Logic
                 if (!HiddenSingleHeuristics.HiddenSingle(board))
                 {
                     again = false;
-                    //if(!NakedPairsHeuristics.NakedPairs(board)) again = false;
+                    //if(!NakedPairsHeuristics.NakedSet(board)) again = false;
                 }
             }
             if (board.IsBoardFull()) return true;

@@ -1,0 +1,14 @@
+﻿namespace SudokuTests.SmallBoards
+{
+    public class SimpleSmallSudokuTests
+    {
+
+        [Fact]
+        public void SmallSudoku1()
+        {
+            string expression = "005300000800000020070010500400005300010070006003200080060500009004000030000009700";
+
+            BaseTests.CheckSudokuSolver(expression);
+        }
+    }
+}
