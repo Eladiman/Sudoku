@@ -2,11 +2,6 @@
 using Sudoku.src.Entities.Interfaces;
 using Sudoku.src.Entities.Models;
 using Sudoku.src.Logic.Heuristics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sudoku.src.Logic
 {
@@ -31,7 +26,7 @@ namespace Sudoku.src.Logic
 
             if (smallestTile == null) return true;//board is full
 
-            return SolveBoardWithRecursion(smallestTile,board);
+            return SolveBoardWithRecursion(smallestTile, board);
         }
 
         /// <summary>
@@ -41,7 +36,7 @@ namespace Sudoku.src.Logic
         /// <param name="smallestTile"></param>
         /// <param name="board"></param>
         /// <returns>True if the board was solved. false otherwise</returns>
-        private static bool SolveBoardWithRecursion(ITile smallestTile,Board board)
+        private static bool SolveBoardWithRecursion(ITile smallestTile, Board board)
         {
             Dictionary<Coordinate, HashSet<int>> savedEmptyCellsState = board.SaveBoardState(); // Save the empty cells state before the backtrack
 
@@ -72,7 +67,7 @@ namespace Sudoku.src.Logic
         private static bool SolveBoardWithoutRecursion(Board board)
         {
             bool again = true;
-            while(again)
+            while (again)
             {
                 BasicHeuristic.FullCellsCleanUp(board);
                 if (!HiddenSingleHeuristics.HiddenSingle(board))

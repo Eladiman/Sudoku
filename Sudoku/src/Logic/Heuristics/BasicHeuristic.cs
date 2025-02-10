@@ -1,10 +1,5 @@
 ﻿using Sudoku.src.Consts;
 using Sudoku.src.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sudoku.src.Logic.Heuristics
 {

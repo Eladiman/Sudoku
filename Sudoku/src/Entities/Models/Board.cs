@@ -2,13 +2,7 @@
 using Sudoku.src.Consts;
 using Sudoku.src.Entities.Exceptions;
 using Sudoku.src.Entities.Interfaces;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Sudoku.src.Entities.Models
 {
@@ -55,9 +49,9 @@ namespace Sudoku.src.Entities.Models
                     currentNumber = expression[index] - SudokuConstants.ASCII_DIFF;
                     currentCoordinate = new Coordinate(row, col);
                     board[row, col] = new Tile(currentNumber, currentCoordinate);
-                    if (currentNumber!=0) fullCells.Add(currentCoordinate);//if full add to full cells list
+                    if (currentNumber != 0) fullCells.Add(currentCoordinate);//if full add to full cells list
                     else emptyCells.Add(currentCoordinate);//if empty add to empty cells list
-                    index++;   
+                    index++;
                 }
             }
         }
@@ -87,7 +81,7 @@ namespace Sudoku.src.Entities.Models
         public void RestoreFullCells(int lastIndex)
         {
             int index = fullCells.Count;
-            for(;index>lastIndex;index--)
+            for (; index > lastIndex; index--)
             {
                 fullCells.RemoveAt(index - 1);
             }
@@ -106,7 +100,7 @@ namespace Sudoku.src.Entities.Models
         /// <returns> True if full, false otherwise</returns>
         public bool IsBoardFull()
         {
-            return fullCells.Count == SudokuConstants.Board_size * SudokuConstants.Board_size;  
+            return fullCells.Count == SudokuConstants.Board_size * SudokuConstants.Board_size;
         }
 
         /// <summary>
@@ -117,9 +111,9 @@ namespace Sudoku.src.Entities.Models
         {
             ITile minTile = null;
             int minCount = SudokuConstants.Board_size;
-            foreach(Coordinate coordinate in emptyCells) 
+            foreach (Coordinate coordinate in emptyCells)
             {
-                if (board[coordinate.X,coordinate.Y].GetSize() <= minCount)
+                if (board[coordinate.X, coordinate.Y].GetSize() <= minCount)
                 {
                     minCount = board[coordinate.X, coordinate.Y].GetSize();
                     minTile = board[coordinate.X, coordinate.Y];
@@ -133,12 +127,12 @@ namespace Sudoku.src.Entities.Models
         /// and generates a dictionary of their locations and their possible values
         /// </summary>
         /// <returns>dictionary of all empty cells locations and their possible values</returns>
-        public Dictionary<Coordinate,HashSet<int>> SaveBoardState()
+        public Dictionary<Coordinate, HashSet<int>> SaveBoardState()
         {
             Dictionary<Coordinate, HashSet<int>> savedCoordinates = new Dictionary<Coordinate, HashSet<int>>(emptyCells.Count);
             foreach (Coordinate cell in emptyCells)
             {
-                savedCoordinates.Add(cell, board[cell.X,cell.Y].GetAvailableNumbers());
+                savedCoordinates.Add(cell, board[cell.X, cell.Y].GetAvailableNumbers());
             }
             return savedCoordinates;
         }
@@ -150,7 +144,7 @@ namespace Sudoku.src.Entities.Models
         public void RestoreBoardState(Dictionary<Coordinate, HashSet<int>> boardState)
         {
             emptyCells.Clear();
-            foreach(Coordinate restoredTilePlace in boardState.Keys)
+            foreach (Coordinate restoredTilePlace in boardState.Keys)
             {
                 board[restoredTilePlace.X, restoredTilePlace.Y].SetCurrentNumber(0);
                 board[restoredTilePlace.X, restoredTilePlace.Y].SetAvailableNumbers(boardState[restoredTilePlace]);
@@ -173,19 +167,19 @@ namespace Sudoku.src.Entities.Models
                 if (Y % SudokuConstants.Sqrt_Board_size == 0)
                 {
                     sb.Append('-', (SudokuConstants.Board_size + SudokuConstants.Sqrt_Board_size) * (MaxDigits + 1) + 1);
-                    sb.Append('\n',1);
+                    sb.Append('\n', 1);
                 }
 
                 for (int X = 0; X < SudokuConstants.Board_size; ++X)
                 {
                     if (X % SudokuConstants.Sqrt_Board_size == 0)
                     {
-                        sb.Append('|',1);
-                        sb.Append(' ',MaxDigits);
+                        sb.Append('|', 1);
+                        sb.Append(' ', MaxDigits);
                     }
-                    int CellValue = board[Y,X].GetCurrentNumber() + SudokuConstants.ASCII_DIFF;
-                    sb.Append((char)CellValue,1);
-                    sb.Append(' ',1);
+                    int CellValue = board[Y, X].GetCurrentNumber() + SudokuConstants.ASCII_DIFF;
+                    sb.Append((char)CellValue, 1);
+                    sb.Append(' ', 1);
                 }
 
                 sb.Append('|', 1);
@@ -248,9 +242,9 @@ namespace Sudoku.src.Entities.Models
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public ITile GetTile(int x,int y)
+        public ITile GetTile(int x, int y)
         {
-            return board[x,y];
+            return board[x, y];
         }
 
         /// <summary>
@@ -265,9 +259,9 @@ namespace Sudoku.src.Entities.Models
         /// <exception cref="LogicalException"> board is not solvable </exception>
         public void RemoveNumber(int x, int y, int number)
         {
-            board[x,y].RemoveAvailableNumber(number);
+            board[x, y].RemoveAvailableNumber(number);
             if (board[x, y].GetSize() == 0) throw new LogicalException();
-            if (board[x,y].GetCurrentNumber() == 0 && board[x, y].GetSize() == 1) //if 1 option left add the cell to the full cells list
+            if (board[x, y].GetCurrentNumber() == 0 && board[x, y].GetSize() == 1) //if 1 option left add the cell to the full cells list
             {
                 board[x, y].UpdateCurrentNumber(); // make the cell full by making him his left option
                 fullCells.Add(board[x, y].GetCoordinate());
@@ -283,9 +277,14 @@ namespace Sudoku.src.Entities.Models
             return emptyCells;
         }
 
+        /// <summary>
+        /// return list of all the empty cells in a given row
+        /// </summary>
+        /// <param name="row">the row to get the list from</param>
+        /// <returns>list of all the empty cells in a given row</returns>
         public List<ITile> GetEmptyCellsRow(int row)
         {
-            List<Coordinate> emptyRowCellsCoordinates = emptyCells.Where(coordinate=>coordinate.X == row).ToList();
+            List<Coordinate> emptyRowCellsCoordinates = emptyCells.Where(coordinate => coordinate.X == row).ToList();
             List<ITile> emptyRowCells = new List<ITile>();
             foreach (Coordinate coord in emptyRowCellsCoordinates)
             {
@@ -293,7 +292,11 @@ namespace Sudoku.src.Entities.Models
             }
             return emptyRowCells;
         }
-
+        /// <summary>
+        /// return list of all the empty cells in a given column
+        /// </summary>
+        /// <param name="col">the column to get the list from</param>
+        /// <returns>list of all the empty cells in a given column</returns>
         public List<ITile> GetEmptyCellsCol(int col)
         {
             List<Coordinate> emptyColCellsCoordinates = emptyCells.Where(coordinate => coordinate.Y == col).ToList();
@@ -304,10 +307,15 @@ namespace Sudoku.src.Entities.Models
             }
             return emptyColCells;
         }
-
+        /// <summary>
+        /// return list of all the empty cells in a given box
+        /// </summary>
+        /// <param name="row">the starting index of the box row</param>
+        /// <param name="col">the starting index of the box col</param>
+        /// <returns>list of all the empty cells in a given box</returns>
         public List<ITile> GetEmptyCellsBox(int row, int col)
         {
-            List<Coordinate> emptyColCellsCoordinates = emptyCells.Where(coordinate => coordinate.X < row +SudokuConstants.Sqrt_Board_size &&coordinate.X>=row && coordinate.Y < col + SudokuConstants.Sqrt_Board_size && coordinate.Y >= col).ToList();
+            List<Coordinate> emptyColCellsCoordinates = emptyCells.Where(coordinate => coordinate.X < row + SudokuConstants.Sqrt_Board_size && coordinate.X >= row && coordinate.Y < col + SudokuConstants.Sqrt_Board_size && coordinate.Y >= col).ToList();
             List<ITile> emptyBoxCells = new List<ITile>();
             foreach (Coordinate coord in emptyColCellsCoordinates)
             {

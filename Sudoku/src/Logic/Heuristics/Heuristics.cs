@@ -1,13 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using Sudoku.src.Consts;
-using Sudoku.src.Entities.Interfaces;
-using Sudoku.src.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+﻿using Sudoku.src.Entities.Models;
 
 namespace Sudoku.src.Logic.Heuristics
 {

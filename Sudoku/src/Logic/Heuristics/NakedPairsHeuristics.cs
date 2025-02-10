@@ -2,11 +2,6 @@
 using Sudoku.src.Entities.Exceptions;
 using Sudoku.src.Entities.Interfaces;
 using Sudoku.src.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sudoku.src.Logic.Heuristics
 {
@@ -20,10 +15,10 @@ namespace Sudoku.src.Logic.Heuristics
         public static bool NakedSet(Board board)
         {
             bool has_changed = false;
-            for(int i = 2; i < SudokuConstants.Board_size; i++)
+            for (int i = 2; i < SudokuConstants.Board_size; i++)
             {
                 WANTED_SIZE = i;
-                if(NakedPairs(board)) has_changed = true;
+                if (NakedPairs(board)) has_changed = true;
 
             }
             return has_changed;
@@ -36,9 +31,9 @@ namespace Sudoku.src.Logic.Heuristics
         public static bool NakedPairs(Board board)
         {
             bool flag = false;
-            if(NakedPairsRows(board)) flag = true;
-            if(NakedPairsCols(board)) flag = true;
-            if(NakedPairsBoxes(board)) flag = true;
+            if (NakedPairsRows(board)) flag = true;
+            if (NakedPairsCols(board)) flag = true;
+            if (NakedPairsBoxes(board)) flag = true;
             return flag;
         }
 
@@ -48,9 +43,9 @@ namespace Sudoku.src.Logic.Heuristics
             bool has_added = false;
             for (int row = 0; row < SudokuConstants.Sqrt_Board_size; row++)
             {
-                for(int col = 0;col<SudokuConstants.Sqrt_Board_size;col++)
+                for (int col = 0; col < SudokuConstants.Sqrt_Board_size; col++)
                 {
-                    emptyCellsInGivenBox = board.GetEmptyCellsBox(row* SudokuConstants.Sqrt_Board_size, col* SudokuConstants.Sqrt_Board_size);
+                    emptyCellsInGivenBox = board.GetEmptyCellsBox(row * SudokuConstants.Sqrt_Board_size, col * SudokuConstants.Sqrt_Board_size);
                     if (NakedPairsInSingleIteration(board, emptyCellsInGivenBox)) has_added = true;
                 }
             }
@@ -76,7 +71,7 @@ namespace Sudoku.src.Logic.Heuristics
             for (int row = 0; row < SudokuConstants.Board_size; row++)
             {
                 emptyCellsInGivenRow = board.GetEmptyCellsRow(row);
-                if (NakedPairsInSingleIteration(board, emptyCellsInGivenRow)) has_added =true;
+                if (NakedPairsInSingleIteration(board, emptyCellsInGivenRow)) has_added = true;
             }
             return has_added;
         }
@@ -144,26 +139,26 @@ namespace Sudoku.src.Logic.Heuristics
 
                 if (optionsUnion.Count == WANTED_SIZE)
                 {
-                    has_added |= RemovePossibilities(optionsUnion, cellsToAvoidedFromDelete,emptyCellsInGivenRow,board);
+                    has_added |= RemovePossibilities(optionsUnion, cellsToAvoidedFromDelete, emptyCellsInGivenRow, board);
                 }
             }
 
             return has_added;
         }
 
-        private static bool RemovePossibilities(HashSet<int> options, HashSet<Coordinate> cellsToAvoidedFromDelete, List<ITile> emptyCellsInGivenRow,Board board)
+        private static bool RemovePossibilities(HashSet<int> options, HashSet<Coordinate> cellsToAvoidedFromDelete, List<ITile> emptyCellsInGivenRow, Board board)
         {
             bool found = false;
-            foreach(ITile cellToDelete in emptyCellsInGivenRow)
+            foreach (ITile cellToDelete in emptyCellsInGivenRow)
             {
-                if(!cellsToAvoidedFromDelete.Contains(cellToDelete.GetCoordinate()))
+                if (!cellsToAvoidedFromDelete.Contains(cellToDelete.GetCoordinate()))
                 {
-                    foreach(int possibility in options)
+                    foreach (int possibility in options)
                     {
                         cellToDelete.RemoveAvailableNumber(possibility);
                         if (cellToDelete.GetSize() == 0) throw new LogicalException();
                     }
-                    if(cellToDelete.GetSize() == 1)
+                    if (cellToDelete.GetSize() == 1)
                     {
                         cellToDelete.UpdateCurrentNumber();
                         found = true;

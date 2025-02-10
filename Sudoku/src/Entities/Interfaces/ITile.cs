@@ -1,9 +1,4 @@
 ﻿using Sudoku.src.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sudoku.src.Entities.Interfaces
 {
@@ -29,6 +24,7 @@ namespace Sudoku.src.Entities.Interfaces
         public void UpdateCurrentNumber();
 
         public void UpdateCurrentNumberAndDeletePossibilities(int number);
+
         public bool ContainNumber(int number);
     }
 }
