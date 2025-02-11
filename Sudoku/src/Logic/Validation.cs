@@ -2,6 +2,9 @@
 using Sudoku.src.Entities.Exceptions;
 namespace Sudoku.src.Logic
 {
+    /// <summary>
+    /// The following class responsible for Validate the board.
+    /// </summary>
     public static class Validation
     {
         /// <summary>

@@ -1,5 +1,8 @@
 ﻿namespace Sudoku.src.Consts
 {
+    /// <summary>
+    /// The following class responsible for saving the board size and other constants
+    /// </summary>
     public static class SudokuConstants
     {
         public const int MAX_BOARD_SIZE = 25;

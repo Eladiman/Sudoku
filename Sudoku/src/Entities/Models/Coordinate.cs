@@ -1,5 +1,8 @@
 ﻿namespace Sudoku.src.Entities.Models;
-
+/// <summary>
+/// The following class responsible for representing a coordinate in board
+/// represents by (x,y)
+/// </summary>
 public class Coordinate
 {
     private int x;

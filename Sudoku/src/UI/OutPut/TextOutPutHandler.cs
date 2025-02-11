@@ -3,6 +3,9 @@ using System.Diagnostics;
 
 namespace Sudoku.src.UI.OutPut
 {
+    /// <summary>
+    /// The following class responsible for print the result after solving the board in a given file path.
+    /// </summary>
     public static class TextOutPutHandler
     {
         /// <summary>

@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Sudoku.src.Entities.Models
 {
+    /// <summary>
+    /// The following class responsible for representing a board and its methods
+    /// </summary>
     public class Board
     {
         private Coordinate currentTile;

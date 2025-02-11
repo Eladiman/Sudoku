@@ -4,6 +4,11 @@ using Sudoku.src.Entities.Interfaces;
 
 namespace Sudoku.src.Entities.Models
 {
+    /// <summary>
+    /// The following class responsible for representing an implementation of a cell and its methods
+    /// use of coordinate for place
+    /// use of hash set for possibilities
+    /// </summary>
     public class Tile : ITile
     {
         private Coordinate place;

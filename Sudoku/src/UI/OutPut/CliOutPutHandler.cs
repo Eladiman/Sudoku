@@ -1,13 +1,11 @@
 ﻿using Sudoku.src.Entities.Models;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sudoku.src.UI.OutPut
 {
+    /// <summary>
+    /// The following class responsible for print the result after solving the board in the cli.
+    /// </summary>
     public static class CliOutPutHandler
     {
         /// <summary>
@@ -16,7 +14,7 @@ namespace Sudoku.src.UI.OutPut
         /// <param name="board"> the board to print</param>
         /// <param name="stopwatch">the stopwatch to indicate the time </param>
         /// <param name="solved">flag to know if board is solved</param>
-        public static void PrintInputForUser(Board board, Stopwatch stopwatch,bool solved)
+        public static void PrintInputForUser(Board board, Stopwatch stopwatch, bool solved)
         {
             if (solved)
             {

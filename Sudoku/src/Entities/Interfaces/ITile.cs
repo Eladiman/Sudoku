@@ -2,16 +2,19 @@
 
 namespace Sudoku.src.Entities.Interfaces
 {
+    /// <summary>
+    /// The following interface responsible for representing the methods of a cell in board
+    /// </summary>
     public interface ITile
     {
 
-        public int GetSize();
+        public int GetSize(); 
 
-        public bool RemoveAvailableNumber(int number);
+        public bool RemoveAvailableNumber(int number); // gets a number and remove it from the cell possibilities
 
         public HashSet<int> GetAvailableNumbers();
 
-        public void AddNumber(int number);
+        public void AddNumber(int number); // gets a number and add it to the cell possibilities
 
         public int GetCurrentNumber();
 
@@ -23,8 +26,9 @@ namespace Sudoku.src.Entities.Interfaces
 
         public void UpdateCurrentNumber();
 
-        public void UpdateCurrentNumberAndDeletePossibilities(int number);
+        // gets a number and make it as the cells current number  by removing the other cell possibilities
+        public void UpdateCurrentNumberAndDeletePossibilities(int number); 
 
-        public bool ContainNumber(int number);
+        public bool ContainNumber(int number);//return true if the given number is in the cell possebilities
     }
 }

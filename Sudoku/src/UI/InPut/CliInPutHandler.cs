@@ -1,5 +1,8 @@
 ﻿namespace Sudoku.src.UI.InPut
 {
+    /// <summary>
+    /// The following class responsible for read the board string from the cli.
+    /// </summary>
     public static class CliInPutHandler
     {
         /// <summary>

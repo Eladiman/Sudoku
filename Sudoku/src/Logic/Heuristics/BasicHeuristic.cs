@@ -3,6 +3,11 @@ using Sudoku.src.Entities.Models;
 
 namespace Sudoku.src.Logic.Heuristics
 {
+    /// <summary>
+    /// The following class responsible for Run a heuristic that
+    /// Goes through all the filled cells and Removes the possibility
+    /// that they will exist from the row, column and box where they are.
+    /// </summary>
     public static class BasicHeuristic
     {
         /// <summary>
@@ -26,6 +31,7 @@ namespace Sudoku.src.Logic.Heuristics
             UpdateCol(board, coordinate);
             UpdateBox(board, coordinate);
         }
+
         /// <summary>
         ///  Goes through all the cells in the box of the position it received.
         ///  and Removes the number of the cell in this position from the entire box

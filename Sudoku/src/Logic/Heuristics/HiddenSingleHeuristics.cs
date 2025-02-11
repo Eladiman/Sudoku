@@ -4,6 +4,12 @@ using Sudoku.src.Entities.Models;
 
 namespace Sudoku.src.Logic.Heuristics
 {
+    /// <summary>
+    /// The following class responsible for implementation of the hidden single heuristic that
+    /// Goes through all the empty cells and searches for each row column and box
+    /// if there is a cell that has a number that the other cells in the row/column/box do not have.
+    /// and if so then it adds the cell to the full cells.
+    /// </summary>
     public static class HiddenSingleHeuristics
     {
         /// <summary>

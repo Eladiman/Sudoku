@@ -6,6 +6,13 @@ using System.Diagnostics;
 
 namespace Sudoku.src.Logic
 {
+    /// <summary>
+    /// The following class responsible for Run the program.
+    /// Use of other classes for :
+    /// read boards from user
+    /// solve the boards
+    /// show the answer to the user 
+    /// </summary>
     public static class MainController
     {
         private static bool run = true;

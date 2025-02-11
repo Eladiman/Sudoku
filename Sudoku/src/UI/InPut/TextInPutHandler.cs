@@ -1,5 +1,8 @@
 ﻿namespace Sudoku.src.UI.InPut
 {
+    /// <summary>
+    /// The following class responsible for read the board string from a given file path.
+    /// </summary>
     public static class TextInPutHandler
     {
         /// <summary>

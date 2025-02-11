@@ -5,6 +5,12 @@ using Sudoku.src.Logic.Heuristics;
 
 namespace Sudoku.src.Logic
 {
+    /// <summary>
+    /// The following class responsible for Run the algorithm which solve the board
+    /// use of 2 main methods
+    /// backtracking
+    /// run heuristics
+    /// </summary>
     public static class BoardSolver
     {
         /// <summary>
