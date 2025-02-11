@@ -7,154 +7,168 @@ namespace Sudoku.src.Logic.Heuristics
 {
     public static class HiddenPairsHeuristics
     {
-        private static int WANTED_SIZE = 2;
-
+        private static int _wantedSize = 2;
         /// <summary>
         /// Goes through all the empty cells and if it detects two cells with the same 2 options
         /// then Removes these options from the row/column/box where they were found
         /// </summary>
         /// <param name="board">The board on which the function will run</param>
-        public static bool HiddenPairs(Board board)
+        public static void HiddenPairs(Board board)
         {
-            bool flag = false;
-            if (HiddenPairsRows(board)) flag = true;
-            if (HiddenPairsCols(board)) flag = true;
-            if (HiddenPairsBoxes(board)) flag = true;
-            return flag;
+            HiddenPairsRows(board);
+            HiddenPairsCols(board);
+            HiddenPairsBoxes(board);
         }
 
-        private static bool HiddenPairsBoxes(Board board)
+        private static void HiddenPairsBoxes(Board board)
         {
             List<ITile> emptyCellsInGivenBox;
-            bool has_added = false;
             for (int row = 0; row < SudokuConstants.Sqrt_Board_size; row++)
             {
                 for (int col = 0; col < SudokuConstants.Sqrt_Board_size; col++)
                 {
                     emptyCellsInGivenBox = board.GetEmptyCellsBox(row * SudokuConstants.Sqrt_Board_size, col * SudokuConstants.Sqrt_Board_size);
-                    if (HiddenPairsInSingleIteration(board, emptyCellsInGivenBox)) has_added = true;
+                    HiddenPairsInSingleIteration(board, emptyCellsInGivenBox);
                 }
             }
-            return has_added;
         }
 
-        private static bool HiddenPairsCols(Board board)
+        /// <summary>
+        /// Identifies hidden pairs in each column and removes unnecessary candidates.
+        /// </summary>
+        /// <param name="board">The Sudoku board to analyze.</param>
+        private static void HiddenPairsCols(Board board)
         {
             List<ITile> emptyCellsInGivenCol;
-            bool has_added = false;
             for (int col = 0; col < SudokuConstants.Board_size; col++)
             {
                 emptyCellsInGivenCol = board.GetEmptyCellsCol(col);
-                if (HiddenPairsInSingleIteration(board, emptyCellsInGivenCol)) has_added = true;
+                HiddenPairsInSingleIteration(board, emptyCellsInGivenCol);
             }
-            return has_added;
         }
 
-        private static bool HiddenPairsRows(Board board)
+        /// <summary>
+        /// Identifies hidden pairs in each row and removes unnecessary candidates.
+        /// </summary>
+        /// <param name="board">The Sudoku board to analyze.</param>
+        private static void HiddenPairsRows(Board board)
         {
             List<ITile> emptyCellsInGivenRow;
-            bool has_added = false;
             for (int row = 0; row < SudokuConstants.Board_size; row++)
             {
                 emptyCellsInGivenRow = board.GetEmptyCellsRow(row);
-                if (HiddenPairsInSingleIteration(board, emptyCellsInGivenRow)) has_added = true;
+                HiddenPairsInSingleIteration(board, emptyCellsInGivenRow);
             }
-            return has_added;
         }
 
-        //private static bool NakedPairsInSingleIteration(Board board, List<ITile> emptyCellsInGivenRow)
-        //{
-        //    HashSet<ITile> wantedCells = new HashSet<ITile>();
-
-        //    HashSet<Coordinate> cellsToAvoidedFromDelete = new HashSet<Coordinate>();
-
-        //    bool has_change = false;
-
-        //    int NumberOfElements = 1;
-
-        //    foreach (ITile cell in emptyCellsInGivenRow)
-        //    {
-        //        if (cell.GetSize() == WANTED_SIZE)
-        //        {
-
-        //            if (!wantedCells.TryGetValue(cell,out ITile temp)) wantedCells.Add(cell);
-        //            else
-        //            {
-        //                NumberOfElements++;
-        //                if(NumberOfElements == SudokuConstants.Board_size)
-        //                {
-        //                    if (RemovePossibilities(cell, cellsToAvoidedFromDelete, emptyCellsInGivenRow, board)) has_change = true;
-        //                }
-        //                else
-        //                {
-        //                    if (!cellsToAvoidedFromDelete.Contains(temp.GetCoordinate()))
-        //                        cellsToAvoidedFromDelete.Add(temp.GetCoordinate());
-
-        //                    cellsToAvoidedFromDelete.Add(cell.GetCoordinate());
-        //                }
-
-        //            }
-        //        }
-        //    }
-        //    return has_change;
-        //}
-
-        private static bool HiddenPairsInSingleIteration(Board board, List<ITile> emptyCellsInGivenRow)
+        /// <summary>
+        /// Detects hidden pairs in a given row, column, or box and eliminates unnecessary candidates.
+        /// if it find hidden pair that can be in more then 2 different tiles then it will rise an exception
+        /// </summary>
+        /// <param name="board">The Sudoku board to analyze.</param>
+        /// <param name="emptyCells">A list of empty cells within a row, column, or box.</param>
+        /// <exception cref="LogicalException">
+        /// example:
+        /// if the numbers 1,2 can only be in the first 3 tiles in a give row
+        /// then there is a logical problem.
+        /// </exception>
+        private static void HiddenPairsInSingleIteration(Board board, List<ITile> emptyCells)
         {
-            bool has_added = false;
+            List<ITile>[] possibilityArray = new List<ITile>[Consts.SudokuConstants.Board_size];
 
-            HashSet<Coordinate> cellsToAvoidedFromDelete = new HashSet<Coordinate>();
-
-            bool isChanged = false;
-
-            if (emptyCellsInGivenRow.Count < WANTED_SIZE)
+            foreach (var tile in emptyCells)
             {
-                return false;
+                AddToPossibilityArray(possibilityArray, tile);
             }
 
-            for (int i = 0; i < emptyCellsInGivenRow.Count - WANTED_SIZE; i++)
+            for (int number = 0; number < possibilityArray.Length - 1; number++)
             {
-                var subset = emptyCellsInGivenRow.GetRange(i, WANTED_SIZE);
-                var optionsUnion = new HashSet<int>();
-
-                foreach (var cell in subset)
+                bool found = false;
+                if (possibilityArray[number] != null && possibilityArray[number].Count == _wantedSize)
                 {
-                    optionsUnion.UnionWith(cell.GetAvailableNumbers());
-                    cellsToAvoidedFromDelete.Add(cell.GetCoordinate());
-                }
-
-                if (optionsUnion.Count == WANTED_SIZE)
-                {
-                    has_added |= RemovePossibilities(optionsUnion, cellsToAvoidedFromDelete, emptyCellsInGivenRow, board);
+                    int j = number + 1;
+                    int place = j;
+                    for (; j < possibilityArray.Length; j++)
+                    {
+                        if (IsListsEquals(possibilityArray, number, j))
+                        {
+                            if (!found)
+                            {
+                                found = true;
+                                place = j;
+                            }
+                            else throw new LogicalException();
+                        }
+                    }
+                    if (found) RemovePossibilitiesFromTiles(possibilityArray, number, place);
                 }
             }
 
-            return has_added;
         }
 
-        private static bool RemovePossibilities(HashSet<int> options, HashSet<Coordinate> cellsToAvoidedFromDelete, List<ITile> emptyCellsInGivenRow, Board board)
+        /// <summary>
+        /// Removes irrelevant candidates from the detected hidden pairs.
+        /// </summary>
+        /// <param name="possibilityArray">The array of lists</param>
+        /// <param name="index1">List index</param>
+        /// <param name="index2">list index</param>
+        private static void RemovePossibilitiesFromTiles(List<ITile>[] possibilityArray, int index1, int index2)
         {
-            bool found = false;
-            foreach (ITile cellToDelete in emptyCellsInGivenRow)
+            foreach (var tile in possibilityArray[index1])
             {
-                if (!cellsToAvoidedFromDelete.Contains(cellToDelete.GetCoordinate()))
+                foreach (var possibility in tile.GetAvailableNumbers())
                 {
-                    foreach (int possibility in options)
-                    {
-                        cellToDelete.RemoveAvailableNumber(possibility);
-                        if (cellToDelete.GetSize() == 0) throw new LogicalException();
-                    }
-                    if (cellToDelete.GetSize() == 1)
-                    {
-                        cellToDelete.UpdateCurrentNumber();
-                        found = true;
-                        board.AddFullCell(cellToDelete.GetCoordinate());
-                        board.RemoveEmptyCell(cellToDelete.GetCoordinate());
-                    }
-
+                    if (possibility != (index1 + 1) && possibility != (index2 + 1)) tile.RemoveAvailableNumber(possibility);
                 }
             }
-            return found;
+
         }
+
+        /// <summary>
+        /// Checks if two lists of tiles contain the same elements.
+        /// </summary>
+        /// <param name="possibilityArray">The array of lists</param>
+        /// <param name="index1">List index</param>
+        /// <param name="index2">list index</param>
+        /// <returns>true if lists are equals</returns>
+        private static bool IsListsEquals(List<ITile>[] possibilityArray, int index1, int index2)
+        {
+            if (possibilityArray[index2] == null) return false;
+
+            if (possibilityArray[index1].Count != possibilityArray[index2].Count) return false;
+
+            foreach (var tile in possibilityArray[index1])
+            {
+                if (!IsListContain(possibilityArray[index2], tile)) return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if a list contains a specific tile.(by compering coordinates)
+        /// </summary>
+        /// <param name="tiles">A given list</param>
+        /// <param name="tile">A given tile</param>
+        /// <returns>true if in list</returns>
+        private static bool IsListContain(List<ITile> tiles, ITile tile)
+        {
+            foreach (var tempTile in tiles) if (tempTile.GetCoordinate().Equals(tile.GetCoordinate())) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Goes through every possibility of a given tile and adds the tile to the corrects lists.
+        /// </summary>
+        /// <param name="possibilityArray">The lists array</param>
+        /// <param name="tile">A given tile</param>
+        private static void AddToPossibilityArray(List<ITile>[] possibilityArray, ITile tile)
+        {
+            foreach (var possibility in tile.GetAvailableNumbers())
+            {
+                if (possibilityArray[possibility - 1] == null) possibilityArray[possibility - 1] = new List<ITile>(); //if list is null create new list
+                possibilityArray[possibility - 1].Add(tile);
+            }
+        }
+
     }
 }
