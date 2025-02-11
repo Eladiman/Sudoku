@@ -42,18 +42,18 @@ namespace Sudoku.src.Logic.Heuristics
         /// <returns>True if the hidden single row found the searched cell. false otherwise</returns>
         private static bool HiddenSingleBox(Board board, ITile currentTile)
         {
-            int startOfBoxRow = currentTile.GetCoordinate().X / SudokuConstants.Sqrt_Board_size * SudokuConstants.Sqrt_Board_size;
-            int startOfBoxCol = currentTile.GetCoordinate().Y / SudokuConstants.Sqrt_Board_size * SudokuConstants.Sqrt_Board_size;
+            int startOfBoxRow = currentTile.GetCoordinate().X / SudokuConstants.SqrtBoardSize * SudokuConstants.SqrtBoardSize;
+            int startOfBoxCol = currentTile.GetCoordinate().Y / SudokuConstants.SqrtBoardSize * SudokuConstants.SqrtBoardSize;
             int row = startOfBoxRow;
             int col = startOfBoxCol;
             foreach (int possibility in currentTile.GetAvailableNumbers())
             {
                 row = startOfBoxRow;
                 bool found = false;
-                for (; row < startOfBoxRow + SudokuConstants.Sqrt_Board_size; row++)
+                for (; row < startOfBoxRow + SudokuConstants.SqrtBoardSize; row++)
                 {
                     col = startOfBoxCol;
-                    for (; col < SudokuConstants.Sqrt_Board_size + startOfBoxCol; col++)
+                    for (; col < SudokuConstants.SqrtBoardSize + startOfBoxCol; col++)
                     {
                         if (!(col == currentTile.GetCoordinate().Y && row == currentTile.GetCoordinate().X))
                         {
@@ -89,7 +89,7 @@ namespace Sudoku.src.Logic.Heuristics
             foreach (int possibility in currentTile.GetAvailableNumbers())
             {
                 bool found = false;
-                for (row = 0; row < SudokuConstants.Board_size; row++)
+                for (row = 0; row < SudokuConstants.BoardSize; row++)
                 {
                     if (row != currentTile.GetCoordinate().X
                         && board.GetTile(row, currentTile.GetCoordinate().Y).GetCurrentNumber() == 0
@@ -121,7 +121,7 @@ namespace Sudoku.src.Logic.Heuristics
             foreach (int possibility in currentTile.GetAvailableNumbers())
             {
                 bool found = false;
-                for (col = 0; col < SudokuConstants.Board_size; col++)
+                for (col = 0; col < SudokuConstants.BoardSize; col++)
                 {
                     if (col != currentTile.GetCoordinate().Y
                         && board.GetTile(currentTile.GetCoordinate().X, col).GetCurrentNumber() == 0

@@ -5,12 +5,19 @@ using Sudoku.src.Entities.Models;
 
 namespace Sudoku.src.Logic.Heuristics
 {
+    /// <summary>
+    /// The following class responsible for implementation of the hidden pairs heuristic that
+    /// Goes through all the empty cells and searches for each row column and box
+    /// if there is 2 cells that has 2 numbers that the other cells in the row/column/box do not have.
+    /// and if so then it remove the other possibilities from those 2 cells.
+    /// </summary>
     public static class HiddenPairsHeuristics
     {
         private static int _wantedSize = 2;
         /// <summary>
-        /// Goes through all the empty cells and if it detects two cells with the same 2 options
-        /// then Removes these options from the row/column/box where they were found
+        /// Goes through all the empty cells and searches for each row column and box
+        /// if there is 2 cells that has 2 numbers that the other cells in the row/column/box do not have.
+        /// and if so then it remove the other possibilities from those 2 cells.
         /// </summary>
         /// <param name="board">The board on which the function will run</param>
         public static void HiddenPairs(Board board)
@@ -20,14 +27,18 @@ namespace Sudoku.src.Logic.Heuristics
             HiddenPairsBoxes(board);
         }
 
+        /// <summary>
+        /// Identifies hidden pairs in each Box and removes unnecessary candidates.
+        /// </summary>
+        /// <param name="board">The Sudoku board to analyze.</param>
         private static void HiddenPairsBoxes(Board board)
         {
             List<ITile> emptyCellsInGivenBox;
-            for (int row = 0; row < SudokuConstants.Sqrt_Board_size; row++)
+            for (int row = 0; row < SudokuConstants.SqrtBoardSize; row++)
             {
-                for (int col = 0; col < SudokuConstants.Sqrt_Board_size; col++)
+                for (int col = 0; col < SudokuConstants.SqrtBoardSize; col++)
                 {
-                    emptyCellsInGivenBox = board.GetEmptyCellsBox(row * SudokuConstants.Sqrt_Board_size, col * SudokuConstants.Sqrt_Board_size);
+                    emptyCellsInGivenBox = board.GetEmptyCellsBox(row * SudokuConstants.SqrtBoardSize, col * SudokuConstants.SqrtBoardSize);
                     HiddenPairsInSingleIteration(board, emptyCellsInGivenBox);
                 }
             }
@@ -40,7 +51,7 @@ namespace Sudoku.src.Logic.Heuristics
         private static void HiddenPairsCols(Board board)
         {
             List<ITile> emptyCellsInGivenCol;
-            for (int col = 0; col < SudokuConstants.Board_size; col++)
+            for (int col = 0; col < SudokuConstants.BoardSize; col++)
             {
                 emptyCellsInGivenCol = board.GetEmptyCellsCol(col);
                 HiddenPairsInSingleIteration(board, emptyCellsInGivenCol);
@@ -54,7 +65,7 @@ namespace Sudoku.src.Logic.Heuristics
         private static void HiddenPairsRows(Board board)
         {
             List<ITile> emptyCellsInGivenRow;
-            for (int row = 0; row < SudokuConstants.Board_size; row++)
+            for (int row = 0; row < SudokuConstants.BoardSize; row++)
             {
                 emptyCellsInGivenRow = board.GetEmptyCellsRow(row);
                 HiddenPairsInSingleIteration(board, emptyCellsInGivenRow);
@@ -74,33 +85,33 @@ namespace Sudoku.src.Logic.Heuristics
         /// </exception>
         private static void HiddenPairsInSingleIteration(Board board, List<ITile> emptyCells)
         {
-            List<ITile>[] possibilityArray = new List<ITile>[Consts.SudokuConstants.Board_size];
+            List<ITile>[] possibilityArray = new List<ITile>[Consts.SudokuConstants.BoardSize];
 
             foreach (var tile in emptyCells)
             {
                 AddToPossibilityArray(possibilityArray, tile);
             }
-
-            for (int number = 0; number < possibilityArray.Length - 1; number++)
+            //following fors checks every possibility in which can be hidden pair
+            for (int index1 = 0; index1 < possibilityArray.Length - 1; index1++)
             {
                 bool found = false;
-                if (possibilityArray[number] != null && possibilityArray[number].Count == _wantedSize)
+                if (possibilityArray[index1] != null && possibilityArray[index1].Count == _wantedSize)
                 {
-                    int j = number + 1;
-                    int place = j;
-                    for (; j < possibilityArray.Length; j++)
+                    int index2 = index1 + 1;
+                    int place = index2;
+                    for (; index2 < possibilityArray.Length; index2++)
                     {
-                        if (IsListsEquals(possibilityArray, number, j))
+                        if (IsListsEquals(possibilityArray, index1, index2))
                         {
                             if (!found)
                             {
                                 found = true;
-                                place = j;
+                                place = index2;
                             }
                             else throw new LogicalException();
                         }
                     }
-                    if (found) RemovePossibilitiesFromTiles(possibilityArray, number, place);
+                    if (found) RemovePossibilitiesFromTiles(possibilityArray, index1, place);
                 }
             }
 

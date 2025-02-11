@@ -5,10 +5,10 @@
     /// </summary>
     public static class SudokuConstants
     {
-        public const int MAX_BOARD_SIZE = 25;
-        public static int Board_size { get; set; }
-        public static int Sqrt_Board_size { get; set; }
+        public const int MaxBoardSize = 25;
+        public static int BoardSize { get; set; }
+        public static int SqrtBoardSize => (int)Math.Sqrt(BoardSize);
 
-        public const char ASCII_DIFF = '0';
+        public const char AsciiDiff = '0';
     }
 }

@@ -41,15 +41,15 @@ namespace Sudoku.src.Logic.Heuristics
         private static void UpdateBox(Board board, Coordinate coordinate)
         {
             int numberToDelete = board.GetTile(coordinate).GetCurrentNumber();
-            int startOfBoxRow = coordinate.X / SudokuConstants.Sqrt_Board_size * SudokuConstants.Sqrt_Board_size;
-            int startOfBoxCol = coordinate.Y / SudokuConstants.Sqrt_Board_size * SudokuConstants.Sqrt_Board_size;
+            int startOfBoxRow = coordinate.X / SudokuConstants.SqrtBoardSize * SudokuConstants.SqrtBoardSize;
+            int startOfBoxCol = coordinate.Y / SudokuConstants.SqrtBoardSize * SudokuConstants.SqrtBoardSize;
             int row = startOfBoxRow;
             int col = startOfBoxCol;
 
-            for (; row < startOfBoxRow + SudokuConstants.Sqrt_Board_size; row++)
+            for (; row < startOfBoxRow + SudokuConstants.SqrtBoardSize; row++)
             {
                 col = startOfBoxCol;
-                for (; col < SudokuConstants.Sqrt_Board_size + startOfBoxCol; col++)
+                for (; col < SudokuConstants.SqrtBoardSize + startOfBoxCol; col++)
                 {
                     if (!(col == coordinate.Y && row == coordinate.X))
                     {
@@ -68,7 +68,7 @@ namespace Sudoku.src.Logic.Heuristics
         {
             int numberToDelete = board.GetTile(coordinate).GetCurrentNumber();
 
-            for (int col = 0; col < SudokuConstants.Board_size; col++)
+            for (int col = 0; col < SudokuConstants.BoardSize; col++)
             {
                 if (col != coordinate.Y)
                 {
@@ -86,7 +86,7 @@ namespace Sudoku.src.Logic.Heuristics
         {
             int numberToDelete = board.GetTile(coordinate).GetCurrentNumber();
 
-            for (int row = 0; row < SudokuConstants.Board_size; row++)
+            for (int row = 0; row < SudokuConstants.BoardSize; row++)
             {
                 if (row != coordinate.X)
                 {

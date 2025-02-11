@@ -1,4 +1,5 @@
-﻿using Sudoku.src.Entities.Exceptions;
+﻿using Sudoku.src.Consts;
+using Sudoku.src.Entities.Exceptions;
 using Sudoku.src.Entities.Interfaces;
 using Sudoku.src.Entities.Models;
 using Sudoku.src.Logic.Heuristics;
@@ -55,7 +56,7 @@ namespace Sudoku.src.Logic
                 smallestTile.UpdateCurrentNumberAndDeletePossibilities(currentPossibility);
                 board.AddFullCell(smallestTile.GetCoordinate());
                 board.RemoveEmptyCell(smallestTile.GetCoordinate());
-                //Console.WriteLine(board.ToString());
+
                 if (SolveBoard(board)) return true;
 
                 board.RestoreBoardState(savedEmptyCellsState);
@@ -76,11 +77,11 @@ namespace Sudoku.src.Logic
             while (again)
             {
                 BasicHeuristic.FullCellsCleanUp(board);
-                //HiddenPairsHeuristics.HiddenPairs(board);
                 if (!HiddenSingleHeuristics.HiddenSingle(board))
                 {
                     again = false;
-                    HiddenPairsHeuristics.HiddenPairs(board);
+                    //do not run hidden pairs on big boards
+                    if(SudokuConstants.BoardSize != SudokuConstants.MaxBoardSize) HiddenPairsHeuristics.HiddenPairs(board);
                 }
             }
             if (board.IsBoardFull()) return true;

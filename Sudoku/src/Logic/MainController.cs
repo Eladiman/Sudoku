@@ -15,7 +15,7 @@ namespace Sudoku.src.Logic
     /// </summary>
     public static class MainController
     {
-        private static bool run = true;
+        private static bool _run = true;
 
 
         /// <summary>
@@ -24,11 +24,11 @@ namespace Sudoku.src.Logic
         /// </summary>
         public static void Run()
         {
-            while (run)
+            while (_run)
             {
                 try
                 {
-                    mainGameManager();
+                    MainGameManager();
                 }
                 catch (Exception e)
                 {
@@ -45,12 +45,15 @@ namespace Sudoku.src.Logic
         /// 2. gets board from text file
         /// 3. exit the program
         /// </summary>
-        private static void mainGameManager()
+        private static void MainGameManager()
         {
             ShowMenu();
-            String option = Console.ReadLine();
-            String expression = null;
-            String filePath = null;
+            string option = Console.ReadLine();
+
+            if(option == null) { option = "3"; }//for ^C
+
+            string expression = null;
+            string filePath = null;
             switch (option)
             {
                 case "1":
@@ -68,7 +71,7 @@ namespace Sudoku.src.Logic
 
                 case "3":
                     Console.WriteLine("BYE! ;)");
-                    run = false;
+                    _run = false;
                     break;
 
                 default:
@@ -96,16 +99,14 @@ namespace Sudoku.src.Logic
             string str = expression;
             str = str.Replace('.', '0');
 
-            Validation.CheckLength(str);
-            Validation.CheckNumber(str);
-
-            SudokuConstants.Board_size = (int)Math.Sqrt(str.Length);
-            SudokuConstants.Sqrt_Board_size = (int)(Math.Sqrt(SudokuConstants.Board_size));
+            Validator.CheckNumber(str);
+            Validator.CheckLength(str);
 
             Board board = new Board(str);
             Console.WriteLine(board);
             stopWatch.Start();
             bool solved = BoardSolver.SolveBoard(board);
+            if (!solved) Console.WriteLine(board.GetString());
             stopWatch.Stop();
 
             CliOutPutHandler.PrintInputForUser(board,stopWatch,solved);

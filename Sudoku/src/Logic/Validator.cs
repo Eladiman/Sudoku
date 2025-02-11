@@ -5,7 +5,7 @@ namespace Sudoku.src.Logic
     /// <summary>
     /// The following class responsible for Validate the board.
     /// </summary>
-    public static class Validation
+    public static class Validator
     {
         /// <summary>
         /// Checks the length of the board and throws an exception for a board with invalid length.
@@ -19,7 +19,7 @@ namespace Sudoku.src.Logic
             if (expression == null || expression.Length == 0) throw new SyntaxException("Expression can't be empty!");
             double length = Math.Sqrt(expression.Length);
             bool isInt = length == (int)length;//checks if int
-            if (!isInt || length > SudokuConstants.MAX_BOARD_SIZE)
+            if (!isInt || length > SudokuConstants.MaxBoardSize)
                 throw new SyntaxException($"expression Length is not Valid! should be a Power of a number from 1 to 5");
         }
 
@@ -36,8 +36,8 @@ namespace Sudoku.src.Logic
             int length = (int)Math.Sqrt(expression.Length);
             foreach (char number in expression)
             {
-                if (number < SudokuConstants.ASCII_DIFF || number > SudokuConstants.ASCII_DIFF + length)
-                    throw new SyntaxException($"{number} is not a valid parameter in the Sudoku (should be contained only chars from {SudokuConstants.ASCII_DIFF} - {length})!");
+                if (number < SudokuConstants.AsciiDiff || number > SudokuConstants.AsciiDiff + length)
+                    throw new SyntaxException($"{number} is not a valid parameter in the Sudoku (should be contained only chars from {SudokuConstants.AsciiDiff} - {length})!");
             }
         }
 

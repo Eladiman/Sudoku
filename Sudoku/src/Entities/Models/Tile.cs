@@ -11,11 +11,11 @@ namespace Sudoku.src.Entities.Models
     /// </summary>
     public class Tile : ITile
     {
-        private Coordinate place;
+        private Coordinate _place;
 
-        private HashSet<int> _tiles;
+        private HashSet<int> _possibilities;
 
-        private int currentNumber;
+        private int _currentNumber;
 
         /// <summary>
         /// Gets a number and a coordinate and initialize its starting values according to the number
@@ -24,18 +24,18 @@ namespace Sudoku.src.Entities.Models
         /// <param name="coordinate"></param>
         public Tile(int number, Coordinate coordinate)
         {
-            _tiles = new HashSet<int>();
-            place = coordinate;
-            currentNumber = 0;
+            _possibilities = new HashSet<int>();
+            _place = coordinate;
+            _currentNumber = 0;
             if (number != 0)
             {
-                _tiles.Add(number);
-                currentNumber = number;
+                _possibilities.Add(number);
+                _currentNumber = number;
             }
             else
             {
                 //if number is 0 empty add all the possibilities to cell
-                for (int numberToFill = 1; numberToFill <= SudokuConstants.Board_size; numberToFill++)
+                for (int numberToFill = 1; numberToFill <= SudokuConstants.BoardSize; numberToFill++)
                 {
                     AddNumber(numberToFill);
                 }
@@ -44,17 +44,17 @@ namespace Sudoku.src.Entities.Models
 
         public HashSet<int> GetAvailableNumbers()
         {
-            return new HashSet<int>(_tiles);
+            return new HashSet<int>(_possibilities);
         }
 
         public void SetAvailableNumbers(HashSet<int> availableNumbers)
         {
-            _tiles = new HashSet<int>(availableNumbers);
+            _possibilities = new HashSet<int>(availableNumbers);
         }
 
         public int GetSize()
         {
-            return _tiles.Count;
+            return _possibilities.Count;
         }
 
         /// <summary>
@@ -65,10 +65,10 @@ namespace Sudoku.src.Entities.Models
         /// <exception cref="LogicalException"> if there is an attempted to remove a number from a full cell then throw exception</exception>
         public bool RemoveAvailableNumber(int number)
         {
-            if (currentNumber != 0 && currentNumber == number) throw new LogicalException(); //attempt to execute an invalid board state
-            if (currentNumber == 0 && _tiles.Contains(number))
+            if (_currentNumber != 0 && _currentNumber == number) throw new LogicalException(); //attempt to execute an invalid board state
+            if (_currentNumber == 0 && _possibilities.Contains(number))
             {
-                _tiles.Remove(number);
+                _possibilities.Remove(number);
                 return true;
             }
             return false;
@@ -76,46 +76,46 @@ namespace Sudoku.src.Entities.Models
 
         public void UpdateCurrentNumber()
         {
-            currentNumber = _tiles.First();
+            _currentNumber = _possibilities.First();
         }
 
         public void AddNumber(int number)
         {
-            _tiles.Add(number);
+            _possibilities.Add(number);
         }
 
         public int GetCurrentNumber()
         {
-            return currentNumber;
+            return _currentNumber;
         }
 
         public void SetCurrentNumber(int number)
         {
-            currentNumber = number;
+            _currentNumber = number;
         }
 
         public Coordinate GetCoordinate()
         {
-            return place;
+            return _place;
         }
 
         public bool ContainNumber(int number)
         {
-            return _tiles.Contains(number);
+            return _possibilities.Contains(number);
         }
 
         public void UpdateCurrentNumberAndDeletePossibilities(int number)
         {
-            _tiles.Clear();
-            _tiles.Add(number);
-            currentNumber = number;
+            _possibilities.Clear();
+            _possibilities.Add(number);
+            _currentNumber = number;
         }
 
         public override bool Equals(object? obj)
         {
             if (obj == null) return false;
             Tile other = (Tile)obj;
-            if (_tiles.Equals(other._tiles)) return true;
+            if (_possibilities.Equals(other._possibilities)) return true;
             return false;
         }
     }

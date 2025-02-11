@@ -3,7 +3,7 @@
     /// <summary>
     ///  The following class responsible for Syntax Exception - an wanted chars/ length not valid
     /// </summary>
-    internal class SyntaxException : Exception
+    public class SyntaxException : Exception
     {
         public SyntaxException() { }
 
