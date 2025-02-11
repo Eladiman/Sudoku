@@ -9,6 +9,6 @@ public static class BaseTests
     {
         Board board = new Board(expression);
         bool solve = BoardSolver.SolveBoard(board);
-        Assert.True(solve); 
+        Assert.True(solve);
     }
 }
