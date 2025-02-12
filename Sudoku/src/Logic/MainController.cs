@@ -1,5 +1,4 @@
-﻿using Sudoku.src.Consts;
-using Sudoku.src.Entities.Models;
+﻿using Sudoku.src.Entities.Models;
 using Sudoku.src.UI.InPut;
 using Sudoku.src.UI.OutPut;
 using System.Diagnostics;
@@ -50,7 +49,7 @@ namespace Sudoku.src.Logic
             ShowMenu();
             string option = Console.ReadLine();
 
-            if(option == null) { option = "3"; }//for ^C
+            if (option == null) { option = "3"; }//for ^C
 
             string expression = null;
             string filePath = null;
@@ -92,7 +91,7 @@ namespace Sudoku.src.Logic
         /// </summary>
         /// <param name="expression">the expression to solve</param>
         /// <param name="path">The path of the txt file. if path not null then put the result on the file</param>
-        private static void TrySolveBoard(string expression,string path)
+        private static void TrySolveBoard(string expression, string path)
         {
             Stopwatch stopWatch = new Stopwatch();
 
@@ -106,12 +105,11 @@ namespace Sudoku.src.Logic
             Console.WriteLine(board);
             stopWatch.Start();
             bool solved = BoardSolver.SolveBoard(board);
-            if (!solved) Console.WriteLine(board.GetString());
             stopWatch.Stop();
 
-            CliOutPutHandler.PrintInputForUser(board,stopWatch,solved);
+            CliOutPutHandler.PrintInputForUser(board, stopWatch, solved);
 
-            if(path!=null) TextOutPutHandler.PrintInputForUserInText(board, stopWatch,solved,path);
+            if (path != null) TextOutPutHandler.PrintInputForUserInText(board, stopWatch, solved, path);
 
             //Console.WriteLine($"{BoardSolver.cnt}");
         }
