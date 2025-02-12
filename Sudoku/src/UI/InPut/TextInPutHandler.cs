@@ -7,6 +7,7 @@
     {
         /// <summary>
         /// read expression from a given text file
+        /// file should contain only 1 sudoku inside of it and nothing more.
         /// </summary>
         /// <returns>
         /// return the expression
